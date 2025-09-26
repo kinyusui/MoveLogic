@@ -3,7 +3,8 @@ import * as fs from "fs-extra";
 import * as path from "path";
 import { Project, SourceFile } from "ts-morph";
 import {
-  PosixPath
+  Posixify,
+  posixify
 } from "./makePath";
 
 export const moveFile = (file: SourceFile, oldDirPath: string, newDirPath: string) => {
@@ -11,6 +12,7 @@ export const moveFile = (file: SourceFile, oldDirPath: string, newDirPath: strin
   const newPath = path.join(newDirPath, relativePath);
   file.move(newPath, { overwrite: true }); // move and update imports automatically
 };
+
 type MoveFile = typeof moveFile;
 
 type CommonProps = {
@@ -21,24 +23,36 @@ type ShowProgress = (i: number, total: number) => void;
 type MoveDirProps = CommonProps & {
   log: boolean;
   makeShowProgress: MakeShowProgress;
+  posixify: Posixify
 };
 class MoveLogic {
   constructor(public props: MoveDirProps) {}
-  moveDir(oldDirPath: PosixPath, newDirPath: PosixPath) {
-    // Ensure new directory exists
-    const { moveFile, project, makeShowProgress, log } = this.props;
-    fs.ensureDirSync(newDirPath);
-    const targetFileMatcher = `${oldDirPath}/**/*.ts`;
-    const sourceFiles = project.getSourceFiles(targetFileMatcher);
+  getSourceFiles = (project: Project, oldDirPath: string) => {
+    const targetFileMatcher = this.props.posixify(`${oldDirPath}/**/*.ts`);
+    return project.getSourceFiles(targetFileMatcher);
+  }
 
+  makeMoveFile = (sourceFiles: SourceFile[], oldDirPath: string, newDirPath: string) => {
+    const { moveFile, makeShowProgress, log } = this.props;
     const total = sourceFiles.length;
     const showProgress = makeShowProgress(log);
-    sourceFiles.forEach((file, i) => {
+    return (file: SourceFile, i: number) => {
       moveFile(file, oldDirPath, newDirPath);
       showProgress(i + 1, total);
-    });
-    // --- Save all changes ---
-    project.saveSync();
+    };
+  }
+
+  moveFiles = (sourceFiles: SourceFile[], oldDirPath: string, newDirPath: string) => {
+    const moveFile = this.makeMoveFile(sourceFiles, oldDirPath, newDirPath);
+    sourceFiles.forEach(moveFile);
+  }
+
+  moveDir = (oldDirPath: string, newDirPath: string) => {
+    const { project } = this.props;
+    fs.ensureDirSync(newDirPath); // Ensure new directory exists
+    const sourceFiles = this.getSourceFiles(project, oldDirPath);
+    this.moveFiles(sourceFiles, oldDirPath, newDirPath)
+    project.saveSync(); // --- Save all changes ---
   }
 }
 
@@ -68,7 +82,7 @@ type ArgConfigMoveDir = {
   log: boolean;
 };
 export const configMoveLogic = ({ project, log = false }: ArgConfigMoveDir) => {
-  const moveDir = new MoveLogic({ project, moveFile, makeShowProgress, log });
+  const moveDir = new MoveLogic({ project, moveFile, makeShowProgress, log, posixify });
   return moveDir;
 };
 

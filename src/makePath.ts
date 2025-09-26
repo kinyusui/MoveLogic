@@ -34,6 +34,7 @@ export type PosixPath = string; // path with forward slashes.
 export const posixify = (filePath: string): PosixPath => {
   return filePath.split(path.sep).join(path.posix.sep);
 };
+export type Posixify = typeof posixify;
 
 type Config = { dirPath?: FullPath; posix?: boolean };
 export const configMakeAbsolute = (config: Config = {}) => {

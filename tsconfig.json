@@ -1,7 +1,16 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "paths": {}
+    "target": "ES2020",        // or at least "ES2015"
+    "module": "commonjs",
+    "lib": ["ES2020"],
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "outDir": "out",
+    "rootDir": "src",
+    "strict": true,
+    "sourceMap": true,
+    "inlineSources": true,
   },
   "include": ["./src"]
 }
