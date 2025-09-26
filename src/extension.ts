@@ -34,7 +34,7 @@ export function activate(context: vscode.ExtensionContext) {
         if (!project) return;
 
         const moveLogic = configMoveLogic({ project: project, log: true });
-
+        moveLogic.moveDir(sourcePath, newPath);
         await project.save();
 
         vscode.window.showInformationMessage(`Moved: ${sourcePath} → ${newPath}`);

@@ -6,16 +6,12 @@ import {
   PosixPath
 } from "./makePath";
 
-
-
 export const moveFile = (file: SourceFile, oldDirPath: string, newDirPath: string) => {
   const relativePath = path.relative(oldDirPath, file.getFilePath());
   const newPath = path.join(newDirPath, relativePath);
   file.move(newPath, { overwrite: true }); // move and update imports automatically
 };
-
 type MoveFile = typeof moveFile;
-
 
 type CommonProps = {
   project: Project;
