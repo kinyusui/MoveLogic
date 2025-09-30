@@ -1,6 +1,7 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { posixify } from "./makePath";
 
 const makeFullPath = (dirPath: string, fileName: string) => {
   return path.join(dirPath, fileName);
@@ -70,9 +71,13 @@ export const letQuickPickHandleInput = (currentPath: string, retrieve: Retrieve)
   quickPick.value = currentPath;
 
   quickPick.onDidChangeValue((pathName: string) => {
+    pathName = posixify(pathName);
+    quickPick.value = pathName;
+
     const dir = trueDirName(pathName);
     const allOptions = getAllDirectories(dir);
     quickPick.items = allOptions.map(label => ({ label }));
+    vscode.window.showInformationMessage(`${JSON.stringify(quickPick.items)}`)
   });
 
   quickPick.onDidAccept(() => {
