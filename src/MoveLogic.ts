@@ -2,6 +2,7 @@ import { Presets, SingleBar } from "cli-progress";
 import * as fs from "fs-extra";
 import * as path from "path";
 import { Project, SourceFile } from "ts-morph";
+import { LoggerHandler, makeLoggerHandler } from "./Logger";
 import {
   Posixify,
   posixify
@@ -21,8 +22,8 @@ type CommonProps = {
 };
 type ShowProgress = (i: number, total: number) => void;
 type MoveDirProps = CommonProps & {
-  log: boolean;
-  makeShowProgress: MakeShowProgress;
+  loggerHandler: LoggerHandler;
+  showProgress: ShowProgress;
   posixify: Posixify
 };
 class MoveLogic {
@@ -33,9 +34,8 @@ class MoveLogic {
   }
 
   makeMoveFile = (sourceFiles: SourceFile[], oldDirPath: string, newDirPath: string) => {
-    const { moveFile, makeShowProgress, log } = this.props;
+    const { moveFile, showProgress } = this.props;
     const total = sourceFiles.length;
-    const showProgress = makeShowProgress(log);
     return (file: SourceFile, i: number) => {
       moveFile(file, oldDirPath, newDirPath);
       showProgress(i + 1, total);
@@ -60,13 +60,16 @@ const makeBar = () => {
   const progressBarText =
     "Moving files |{bar}| {percentage}% || {value}/{total} Files;";
   return new SingleBar(
-    { format: progressBarText },
+    { 
+      format: progressBarText,
+    },
     Presets.shades_classic,
   );
 };
+type MakeBar = typeof makeBar
+type Bar = ReturnType<MakeBar>;
 
-const makeShowProgress = (log: boolean): ShowProgress => {
-  const bar = makeBar();
+const makeShowProgress = (log: boolean, bar: Bar): ShowProgress => {
   const yesShowProgress: ShowProgress = (i: number, total: number) => {
     if (i === 0) bar.start(total, i);
     bar.increment();
@@ -82,7 +85,11 @@ type ArgConfigMoveDir = {
   log: boolean;
 };
 export const configMoveLogic = ({ project, log = false }: ArgConfigMoveDir) => {
-  const moveDir = new MoveLogic({ project, moveFile, makeShowProgress, log, posixify });
+  const logChannelName = log ? 'Kai_Move_TS_DIR' : undefined;
+  const loggerHandler = makeLoggerHandler(logChannelName);
+  const bar = makeBar();
+  const showProgress = makeShowProgress(log, bar)
+  const moveDir = new MoveLogic({ project, moveFile, showProgress, loggerHandler, posixify });
   return moveDir;
 };
 
