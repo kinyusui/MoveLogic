@@ -7,39 +7,38 @@ const makeFullPath = (dirPath: string, fileName: string) => {
 }
 
 
-
-const configPushWithLimit = (limit=100) => {
-  const pushWithLimit = (container: string[], items: string[]) => {
+class PushWithLimit {
+  constructor(public limit: number) {}
+  push = (container: string[], items: string[]) => {
     for (const item of items) {
-      const containerFull = container.length >= limit;
+      const containerFull = container.length >= this.limit;
       if (containerFull) break;
 
       container.push(item);     
     }
     return container;
   }
-  return pushWithLimit;
-};
-const pushLimit100 = configPushWithLimit(100);
-type PushWithLimit = ReturnType<typeof configPushWithLimit>;
+
+  limitReached = (itemSize: number) => itemSize >= this.limit;
+}
 
 const configRecursiveSearch = (pushWithLimit: PushWithLimit) => {
   const recursiveSearch = (rootDir: string, totalPaths: string[]) => {
     const entries = fs.readdirSync(rootDir, { withFileTypes: true });
     const directories = entries.filter(entry => entry.isDirectory());
     const dirPaths = directories.map((entry) => makeFullPath(rootDir, entry.name));
-    totalPaths = pushWithLimit(totalPaths, dirPaths)
+    totalPaths = pushWithLimit.push(totalPaths, dirPaths)
 
     for (const dirPath of dirPaths) {
-      if (totalPaths.length > 100) break;
+      if (pushWithLimit.limitReached(totalPaths.length)) break;
       recursiveSearch(dirPath, totalPaths);
     }
     return totalPaths;
   }
   return recursiveSearch;
 }
-
-const recursiveSearch = configRecursiveSearch(pushLimit100);
+const pushWithLimit100 = new PushWithLimit(100);
+const recursiveSearch = configRecursiveSearch(pushWithLimit100);
 
 function getAllDirectories(rootDir: string): string[] {
   // recursively gather all directories under rootDir

@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
+import { letQuickPickHandleInput, Retrieve } from "../Input";
 import { LoggerHandler } from "../Logger";
 import { configMoveLogic } from "../MoveLogic";
-import { letQuickPickHandleInput, Retrieve } from "../PathSuggest";
 import { makeProject } from "../Project";
 import { loggerHandler } from "./Logger";
 
