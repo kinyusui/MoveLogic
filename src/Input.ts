@@ -43,14 +43,8 @@ const recursiveSearch = configRecursiveSearch(pushWithLimit100);
 
 function getAllDirectories(rootDir: string): string[] {
   // recursively gather all directories under rootDir
-  const start = performance.now();
   let totalPaths: string[] = [];
   totalPaths = recursiveSearch(rootDir, totalPaths);
-  const time = performance.now() - start;
-  const message = `Search took: ${time}. `
-    + `\ntotalPaths: ${totalPaths.length}.`
-    + `\nSearch of ${rootDir}.`;
-  vscode.window.showInformationMessage(message);
   return totalPaths;
 }
 
@@ -71,13 +65,11 @@ export const letQuickPickHandleInput = (currentPath: string, retrieve: Retrieve)
   quickPick.value = currentPath;
 
   quickPick.onDidChangeValue((pathName: string) => {
-    pathName = posixify(pathName);
-    quickPick.value = pathName;
-
-    const dir = trueDirName(pathName);
+    const posixifiedPath = posixify(pathName);
+    const dir = trueDirName(posixifiedPath);
     const allOptions = getAllDirectories(dir);
     quickPick.items = allOptions.map(label => ({ label }));
-    vscode.window.showInformationMessage(`${JSON.stringify(quickPick.items)}`)
+    vscode.window.showInformationMessage(`path: ${pathName}, posix: ${posixifiedPath} ___ ${JSON.stringify(quickPick.items)}`)
   });
 
   quickPick.onDidAccept(() => {

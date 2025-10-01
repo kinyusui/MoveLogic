@@ -2,11 +2,13 @@ import { Presets, SingleBar } from "cli-progress";
 import * as fs from "fs-extra";
 import * as path from "path";
 import { Project, SourceFile } from "ts-morph";
-import { LoggerHandler, makeLoggerHandler } from "./Logger";
+import { rootLoggerHandler } from "./Extension/Logger";
+import { LoggerHandler } from "./Logger";
 import {
   Posixify,
   posixify
 } from "./makePath";
+import { RemoveEmptyDir } from "./RemoveEmptyDir";
 
 export const moveFile = (file: SourceFile, oldDirPath: string, newDirPath: string) => {
   const relativePath = path.relative(oldDirPath, file.getFilePath());
@@ -24,7 +26,8 @@ type ShowProgress = (i: number, total: number) => void;
 type MoveDirProps = CommonProps & {
   loggerHandler: LoggerHandler;
   showProgress: ShowProgress;
-  posixify: Posixify
+  posixify: Posixify;
+  removeEmptyDir: RemoveEmptyDir;
 };
 class MoveLogic {
   constructor(public props: MoveDirProps) {}
@@ -47,12 +50,15 @@ class MoveLogic {
     sourceFiles.forEach(moveFile);
   }
 
-  moveDir = (oldDirPath: string, newDirPath: string) => {
-    const { project } = this.props;
+  moveDir = async (oldDirPath: string, newDirPath: string) => {
+    const { project, removeEmptyDir } = this.props;
     fs.ensureDirSync(newDirPath); // Ensure new directory exists
     const sourceFiles = this.getSourceFiles(project, oldDirPath);
-    this.moveFiles(sourceFiles, oldDirPath, newDirPath)
+    this.moveFiles(sourceFiles, oldDirPath, newDirPath);
     project.saveSync(); // --- Save all changes ---
+    
+    await removeEmptyDir.removeEmptyDir(oldDirPath);
+    this.props.loggerHandler.logDebugMessage('Removed Directories');
   }
 }
 
@@ -85,11 +91,12 @@ type ArgConfigMoveDir = {
   log: boolean;
 };
 export const configMoveLogic = ({ project, log = false }: ArgConfigMoveDir) => {
-  const logChannelName = log ? 'Kai_Move_TS_DIR' : undefined;
-  const loggerHandler = makeLoggerHandler(logChannelName);
+  // const logChannelName = log ? 'Kai_Move_TS_DIR' : undefined;
+  const loggerHandler = rootLoggerHandler//makeLoggerHandler(logChannelName);
   const bar = makeBar();
-  const showProgress = makeShowProgress(log, bar)
-  const moveDir = new MoveLogic({ project, moveFile, showProgress, loggerHandler, posixify });
+  const showProgress = makeShowProgress(log, bar);
+  const removeEmptyDir = new RemoveEmptyDir();
+  const moveDir = new MoveLogic({ project, moveFile, showProgress, loggerHandler, posixify, removeEmptyDir });
   return moveDir;
 };
 

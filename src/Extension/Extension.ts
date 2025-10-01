@@ -3,7 +3,7 @@ import { letQuickPickHandleInput, Retrieve } from "../Input";
 import { LoggerHandler } from "../Logger";
 import { configMoveLogic } from "../MoveLogic";
 import { makeProject } from "../Project";
-import { loggerHandler } from "./Logger";
+import { rootLoggerHandler } from "./Logger";
 
 
 type WaitForInput = (sourcePath: string) => Promise<string | undefined>;
@@ -65,5 +65,5 @@ const configExtensionLogic = (logger: LoggerHandler) => {
   }
 }
 
-export const { activate, deactivate } = configExtensionLogic(loggerHandler);
+export const { activate, deactivate } = configExtensionLogic(rootLoggerHandler);
 
