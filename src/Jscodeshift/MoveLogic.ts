@@ -1,30 +1,8 @@
-import fg from "fast-glob";
 import * as fs from "fs";
 import * as path from "path";
-import { rootLoggerHandler } from "../Extension/Logger";
 import { configMakeNewPath, getFullPaths, MakeNewPath } from "../makePath";
-import { UpdateImports } from "./UpdateImports";
-
-async function findFiles(
-  includePatterns: string[],
-  excludePatterns: string[]
-): Promise<string[]> {
-  const files: string[] = [];
-  for (const pattern of includePatterns) {
-    const found: string[] = await fg(pattern, { ignore: excludePatterns });
-    files.push(...found);
-  }
-  return files.map((f) => path.resolve(f));
-}
-
-const updateImports = async (moveTargetPath: string, destPath: string) => {
-  const includes = ["**/*.ts", "**/*.tsx"];
-  const excludes = ["**/node_modules/**"];
-  const allFiles: string[] = await findFiles(includes, excludes);
-  // Update imports in all files
-  const updateImports = new UpdateImports(moveTargetPath, destPath);
-  allFiles.forEach((file) => updateImports.updateFile(file));
-};
+import { RemoveEmptyDir } from "../RemoveEmptyDir";
+import { updateImports } from "./UpdateImports";
 
 const makePathPossible = (filePath: string) => {
   const dirPath = path.dirname(filePath);
@@ -36,10 +14,11 @@ const makePathPossible = (filePath: string) => {
 };
 
 export class MoveLogic {
-  makeNewPath: MakeNewPath;
-  constructor(public oldDirPath: string, public newDirPath: string) {
-    this.makeNewPath = configMakeNewPath(oldDirPath, newDirPath);
-  }
+  constructor(
+    public oldDirPath: string,
+    public makeNewPath: MakeNewPath,
+    public removeDirer: RemoveEmptyDir
+  ) {}
 
   moveFile = async (sourceFile: string) => {
     // Normalize paths
@@ -47,13 +26,25 @@ export class MoveLogic {
     const endFilePath = this.makeNewPath(sourceFile);
     makePathPossible(endFilePath);
     await fs.promises.rename(moveTargetPath, endFilePath);
-    rootLoggerHandler.logDebugMessage(`Moved ${moveTargetPath} to ${endFilePath}`);
-    updateImports(moveTargetPath, endFilePath);
+    // rootLoggerHandler.logDebugMessage(`Moved ${moveTargetPath} to ${endFilePath}`);
+    await updateImports(moveTargetPath, endFilePath);
+  };
+
+  _moveDir = async (oldDirPath: string) => {
+    const filePaths = getFullPaths(oldDirPath);
+    filePaths.forEach(this.moveFile);
   };
 
   moveDir = async () => {
     const { oldDirPath } = this;
-    const filePaths = getFullPaths(oldDirPath);
-    filePaths.forEach(this.moveFile);
+    this._moveDir(oldDirPath);
+    this.removeDirer.removeEmptyDir(oldDirPath);
+    // rootLoggerHandler.logDebugMessage(`Done Moving Dir ${oldDirPath}`);
   };
 }
+
+export const configMoveLogic = (oldDirPath: string, newDirPath: string) => {
+  const removeDirer = new RemoveEmptyDir();
+  const makeNewPath = configMakeNewPath(oldDirPath, newDirPath);
+  return new MoveLogic(oldDirPath, makeNewPath, removeDirer);
+};

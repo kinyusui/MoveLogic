@@ -29,7 +29,7 @@
     "compile_watch": "tsc -watch -p ./",
     "testCompile": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "npx tsx watch ./src/__tests__/MoveLogic.test.ts",
+    "test": "vitest",
     "type_check": "npx tsc --noEmit --watch"
   },
   "dependencies": {
@@ -50,6 +50,7 @@
     "@typescript-eslint/parser": "^5.62.0",
     "eslint-plugin-testing-library": "^7.1.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vitest": "^3.0.0"
   }
 }

@@ -1,7 +1,10 @@
 import * as fs from "fs-extra";
+import { vi } from "vitest";
 import { configMakeAbsolute, getFullPaths } from "../makePath";
 import { configMoveLogic } from "../TsMorph/MoveLogic";
 import { makeTestProject } from "./Project";
+
+vi.mock("vscode", { spy: true });
 
 const makeTestMoveLogic = () => {
   const project = makeTestProject();

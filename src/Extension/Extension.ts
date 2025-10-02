@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { letQuickPickHandleInput, Retrieve } from "../Input";
-import { MoveLogic } from "../Jscodeshift/MoveLogic";
+import { configMoveLogic } from "../Jscodeshift/MoveLogic";
 import { LoggerHandler } from "../Logger";
 import { rootLoggerHandler } from "./Logger";
 
@@ -30,9 +30,10 @@ const configHandleMove = (waitForInput: WaitForInput) => {
 
       // const moveLogic = configMoveLogic({ project: project, log: true });
       // moveLogic.moveDir(sourcePath, newDirPath);
-      const moveLogic = new MoveLogic(sourcePath, newDirPath);
-      moveLogic.moveDir();
       // await project.save();
+
+      const moveLogic = configMoveLogic(sourcePath, newDirPath);
+      moveLogic.moveDir();
 
       vscode.window.showInformationMessage(`Moved: ${sourcePath} → ${newDirPath}`);
     } catch (err: any) {
