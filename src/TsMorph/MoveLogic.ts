@@ -1,10 +1,10 @@
 import { Presets, SingleBar } from "cli-progress";
 import * as fs from "fs-extra";
 import { Project, SourceFile } from "ts-morph";
-import { rootLoggerHandler } from "./Extension/Logger";
-import { LoggerHandler } from "./Logger";
-import { baseMakeNewPath, Posixify, posixify } from "./makePath";
-import { RemoveEmptyDir } from "./RemoveEmptyDir";
+import { rootLoggerHandler } from "../Extension/Logger";
+import { LoggerHandler } from "../Logger";
+import { baseMakeNewPath, Posixify, posixify } from "../makePath";
+import { RemoveEmptyDir } from "../RemoveEmptyDir";
 
 export const moveFile = (file: SourceFile, oldDirPath: string, newDirPath: string) => {
   const newPath = baseMakeNewPath(file.getFilePath(), oldDirPath, newDirPath);

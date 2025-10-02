@@ -1,12 +1,12 @@
 import * as fs from "fs-extra";
 import { configMakeAbsolute, getFullPaths } from "../makePath";
-import { configMoveLogic } from "../MoveLogic";
+import { configMoveLogic } from "../TsMorph/MoveLogic";
 import { makeTestProject } from "./Project";
 
 const makeTestMoveLogic = () => {
   const project = makeTestProject();
-  return configMoveLogic({ project, log: false})
-}
+  return configMoveLogic({ project, log: false });
+};
 
 const moveLogic = makeTestMoveLogic();
 
@@ -53,10 +53,9 @@ function compareDirsText(folder1: string, folder2: string): boolean {
   const testMoveLogic = async () => {
     doMove();
     const match = checkMatch();
-    const message = match ? 'Passed' : 'Failed'
-    console.log(message)
+    const message = match ? "Passed" : "Failed";
+    console.log(message);
   };
 
   await testMoveLogic();
-  
 })();
