@@ -1,10 +1,8 @@
 import * as fs from "fs-extra";
-import { vi } from "vitest";
+import { describe, expect } from "vitest";
 import { configMakeAbsolute, getFullPaths } from "../makePath";
 import { configMoveLogic } from "../TsMorph/MoveLogic";
 import { makeTestProject } from "./Project";
-
-vi.mock("vscode", { spy: true });
 
 const makeTestMoveLogic = () => {
   const project = makeTestProject();
@@ -30,7 +28,7 @@ function compareDirsText(folder1: string, folder2: string): boolean {
   return true;
 }
 
-(async () => {
+describe("move logic handles nested.", async () => {
   const experiment = makeAbsolute("./Experiment");
   const starterPath = makeAbsolute("./CorrectRef/Start");
   await fs.emptyDir(experiment);
@@ -56,9 +54,7 @@ function compareDirsText(folder1: string, folder2: string): boolean {
   const testMoveLogic = async () => {
     doMove();
     const match = checkMatch();
-    const message = match ? "Passed" : "Failed";
-    console.log(message);
+    expect(match).to.be.true;
   };
-
   await testMoveLogic();
-})();
+});
