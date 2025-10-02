@@ -1,41 +1,40 @@
 import * as vscode from "vscode";
 import { letQuickPickHandleInput, Retrieve } from "../Input";
+import { MoveLogic } from "../Jscodeshift/MoveLogic";
 import { LoggerHandler } from "../Logger";
-import { configMoveLogic } from "../MoveLogic";
-import { makeProject } from "../Project";
 import { rootLoggerHandler } from "./Logger";
-
 
 type WaitForInput = (sourcePath: string) => Promise<string | undefined>;
 const promptNewPath: WaitForInput = async (sourcePath: string) => {
   return await vscode.window.showInputBox({
     prompt: "Enter new path for file/folder",
-    value: sourcePath
+    value: sourcePath,
   });
-}
+};
 
 const promptWithSuggestions: WaitForInput = async (sourcePath: string) => {
   const waitForInput = new Promise((resolve: Retrieve) => {
     letQuickPickHandleInput(sourcePath, resolve);
-  })
+  });
   return await waitForInput;
-}
-
+};
 
 const configHandleMove = (waitForInput: WaitForInput) => {
   const handleMove = async (uri: vscode.Uri) => {
     try {
       const sourcePath = uri.fsPath;
-      const newPath = await waitForInput(sourcePath);
-      if (!newPath || newPath === sourcePath) return;
-      const project = makeProject(uri);
-      if (!project) return;
+      const newDirPath = await waitForInput(sourcePath);
+      if (!newDirPath || newDirPath === sourcePath) return;
+      // const project = makeProject(uri);
+      // if (!project) return;
 
-      const moveLogic = configMoveLogic({ project: project, log: true });
-      moveLogic.moveDir(sourcePath, newPath);
-      await project.save();
+      // const moveLogic = configMoveLogic({ project: project, log: true });
+      // moveLogic.moveDir(sourcePath, newDirPath);
+      const moveLogic = new MoveLogic(sourcePath, newDirPath);
+      moveLogic.moveDir();
+      // await project.save();
 
-      vscode.window.showInformationMessage(`Moved: ${sourcePath} → ${newPath}`);
+      vscode.window.showInformationMessage(`Moved: ${sourcePath} → ${newDirPath}`);
     } catch (err: any) {
       vscode.window.showErrorMessage(`Error: ${err.message}`);
     }
@@ -48,22 +47,17 @@ const handleMove = configHandleMove(promptWithSuggestions);
 const configExtensionLogic = (logger: LoggerHandler) => {
   function activate(context: vscode.ExtensionContext) {
     logger.show();
-    const disposable = vscode.commands.registerCommand(
-      "tsMoveHelper.move",
-      handleMove
-    );
+    const disposable = vscode.commands.registerCommand("tsMoveHelper.move", handleMove);
     context.subscriptions.push(disposable);
   }
-
 
   function deactivate() {
     logger.dispose();
   }
   return {
     activate,
-    deactivate
-  }
-}
+    deactivate,
+  };
+};
 
 export const { activate, deactivate } = configExtensionLogic(rootLoggerHandler);
-

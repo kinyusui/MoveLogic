@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "target": "ES2020",        // or at least "ES2015"
+    "target": "ES2020",       
     "module": "commonjs",
     "lib": ["ES2020"],
     "moduleResolution": "node",
@@ -11,6 +11,8 @@
     "strict": true,
     "sourceMap": true,
     "inlineSources": true,
+    "jsx": "react-jsx", // Required for .tsx files
+    "allowJs": true
   },
   "include": ["./src"]
 }

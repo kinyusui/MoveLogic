@@ -1,18 +1,13 @@
 import { Presets, SingleBar } from "cli-progress";
 import * as fs from "fs-extra";
-import * as path from "path";
 import { Project, SourceFile } from "ts-morph";
 import { rootLoggerHandler } from "./Extension/Logger";
 import { LoggerHandler } from "./Logger";
-import {
-  Posixify,
-  posixify
-} from "./makePath";
+import { baseMakeNewPath, Posixify, posixify } from "./makePath";
 import { RemoveEmptyDir } from "./RemoveEmptyDir";
 
 export const moveFile = (file: SourceFile, oldDirPath: string, newDirPath: string) => {
-  const relativePath = path.relative(oldDirPath, file.getFilePath());
-  const newPath = path.join(newDirPath, relativePath);
+  const newPath = baseMakeNewPath(file.getFilePath(), oldDirPath, newDirPath);
   file.move(newPath, { overwrite: true }); // move and update imports automatically
 };
 
@@ -34,21 +29,25 @@ class MoveLogic {
   getSourceFiles = (project: Project, oldDirPath: string) => {
     const targetFileMatcher = this.props.posixify(`${oldDirPath}/**/*.ts`);
     return project.getSourceFiles(targetFileMatcher);
-  }
+  };
 
-  makeMoveFile = (sourceFiles: SourceFile[], oldDirPath: string, newDirPath: string) => {
+  makeMoveFile = (
+    sourceFiles: SourceFile[],
+    oldDirPath: string,
+    newDirPath: string
+  ) => {
     const { moveFile, showProgress } = this.props;
     const total = sourceFiles.length;
     return (file: SourceFile, i: number) => {
       moveFile(file, oldDirPath, newDirPath);
       showProgress(i + 1, total);
     };
-  }
+  };
 
   moveFiles = (sourceFiles: SourceFile[], oldDirPath: string, newDirPath: string) => {
     const moveFile = this.makeMoveFile(sourceFiles, oldDirPath, newDirPath);
     sourceFiles.forEach(moveFile);
-  }
+  };
 
   moveDir = async (oldDirPath: string, newDirPath: string) => {
     const { project, removeEmptyDir } = this.props;
@@ -56,23 +55,23 @@ class MoveLogic {
     const sourceFiles = this.getSourceFiles(project, oldDirPath);
     this.moveFiles(sourceFiles, oldDirPath, newDirPath);
     project.saveSync(); // --- Save all changes ---
-    
+
     await removeEmptyDir.removeEmptyDir(oldDirPath);
-    this.props.loggerHandler.logDebugMessage('Removed Directories');
-  }
+    this.props.loggerHandler.logDebugMessage("Removed Directories");
+  };
 }
 
 const makeBar = () => {
   const progressBarText =
     "Moving files |{bar}| {percentage}% || {value}/{total} Files;";
   return new SingleBar(
-    { 
+    {
       format: progressBarText,
     },
-    Presets.shades_classic,
+    Presets.shades_classic
   );
 };
-type MakeBar = typeof makeBar
+type MakeBar = typeof makeBar;
 type Bar = ReturnType<MakeBar>;
 
 const makeShowProgress = (log: boolean, bar: Bar): ShowProgress => {
@@ -92,12 +91,17 @@ type ArgConfigMoveDir = {
 };
 export const configMoveLogic = ({ project, log = false }: ArgConfigMoveDir) => {
   // const logChannelName = log ? 'Kai_Move_TS_DIR' : undefined;
-  const loggerHandler = rootLoggerHandler//makeLoggerHandler(logChannelName);
+  const loggerHandler = rootLoggerHandler; //makeLoggerHandler(logChannelName);
   const bar = makeBar();
   const showProgress = makeShowProgress(log, bar);
   const removeEmptyDir = new RemoveEmptyDir();
-  const moveDir = new MoveLogic({ project, moveFile, showProgress, loggerHandler, posixify, removeEmptyDir });
+  const moveDir = new MoveLogic({
+    project,
+    moveFile,
+    showProgress,
+    loggerHandler,
+    posixify,
+    removeEmptyDir,
+  });
   return moveDir;
 };
-
-

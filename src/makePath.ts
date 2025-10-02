@@ -1,7 +1,21 @@
 import callsites from "callsites";
-import * as fs from 'fs-extra';
+import * as fs from "fs-extra";
 import * as path from "path";
 import { fillDefaults } from "./Dict";
+
+export const baseMakeNewPath = (
+  filePath: string,
+  oldDirPath: string,
+  newDirPath: string
+) => {
+  const relativePath = path.relative(oldDirPath, filePath);
+  return path.join(newDirPath, relativePath);
+};
+
+export const configMakeNewPath = (oldDirPath: string, newDirPath: string) => {
+  return (filePath: string) => baseMakeNewPath(filePath, oldDirPath, newDirPath);
+};
+export type MakeNewPath = ReturnType<typeof configMakeNewPath>;
 
 export type FullPath = string;
 export type RelativePath = string;
@@ -12,7 +26,6 @@ export function getDirname(functionWrappers: number = 1): string {
   if (callSiteFilePath === null) throw Error();
   return path.dirname(callSiteFilePath);
 }
-
 
 export const getFullPaths = (dir: string) => {
   const fileNames: FullPath[] = [];
