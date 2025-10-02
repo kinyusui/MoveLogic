@@ -10,15 +10,6 @@ const makeImportPath = (dirPath: string, newPath: string) => {
   return newRelativePath.startsWith(".") ? newRelativePath : `./${newRelativePath}`;
 };
 
-export const removeExtension = (itemPath: string): string => {
-  const extension = path.extname(itemPath);
-  const noExtension = extension === "";
-  if (noExtension) return itemPath;
-
-  const newItemPath = path.basename(itemPath, extension);
-  return removeExtension(newItemPath);
-};
-
 const absolutePathMatch = (
   moveTargetPath: string,
   fileDirPath: string,
