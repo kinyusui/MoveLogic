@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { letQuickPickHandleInput, Retrieve } from "../Input";
+// import { configMoveLogic } from "../Jscodeshift/MoveLogic";
 import { configMoveLogic } from "../Jscodeshift/MoveLogic";
 import { LoggerHandler } from "../Logger";
 import { rootLoggerHandler } from "./Logger";
@@ -25,9 +26,9 @@ const configHandleMove = (waitForInput: WaitForInput) => {
       const sourcePath = uri.fsPath;
       const newDirPath = await waitForInput(sourcePath);
       if (!newDirPath || newDirPath === sourcePath) return;
+
       // const project = makeProject(uri);
       // if (!project) return;
-
       // const moveLogic = configMoveLogic({ project: project, log: true });
       // moveLogic.moveDir(sourcePath, newDirPath);
       // await project.save();

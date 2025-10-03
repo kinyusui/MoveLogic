@@ -3,34 +3,46 @@ import * as fs from "fs";
 import jscodeshift, { ASTPath, ImportDeclaration, JSCodeshift } from "jscodeshift";
 import * as path from "path";
 import { rootLoggerHandler } from "../Extension/Logger";
+import { posixify } from "../makePath";
 import { configWorkspaceFs } from "../WorkspaceFs/WorkspaceFs";
+import { removeExtension } from "./removeExtension";
 
 const makeImportPath = (dirPath: string, newPath: string) => {
-  const newRelativePath: string = path.relative(dirPath, newPath).replace(/\\/g, "/");
+  const newPathWrongSeparator: string = path.relative(dirPath, newPath);
+  const newRelativePath = posixify(newPathWrongSeparator);
   return newRelativePath.startsWith(".") ? newRelativePath : `./${newRelativePath}`;
 };
 
-const absolutePathMatch = (
+export const isMoveTargetAnImport = (
   moveTargetPath: string,
-  fileDirPath: string,
-  importPath: string
+  importPathInFile: string,
+  dirOfFileWithImport: string
 ) => {
   // const workspaceFs = configWorkspaceFs();
-
   const absMoveTargetPath = path.resolve(moveTargetPath);
-  const absImportPath = path.resolve(fileDirPath, importPath);
-  rootLoggerHandler.logDebugMessage(`
-    absMoveTargetpath: ${absMoveTargetPath},
-    absImportPath: ${absImportPath}
+  const absImportPath = path.resolve(dirOfFileWithImport, importPathInFile);
+  const match = absMoveTargetPath === absImportPath;
+  if (match) {
+    rootLoggerHandler.logDebugMessage(`
+    ---Did Affect Another File---
+    absMoveTargetpath:   ${absMoveTargetPath}
+    absImportPath:       ${absImportPath}
+    dirOfFileWithImport: ${dirOfFileWithImport}
+    importPathInFile:    ${importPathInFile}
     `);
-  return absMoveTargetPath === absImportPath;
+  }
+  return match;
 };
 
 type ASTImportPath = ASTPath<ImportDeclaration>;
 
+type PathWithNoExtension = string;
 export class UpdateImports {
   updateOccurred: boolean;
-  constructor(public moveTargetPath: string, public newPath: string) {
+  constructor(
+    public moveTargetPath: PathWithNoExtension,
+    public newPath: PathWithNoExtension
+  ) {
     this.updateOccurred = false;
   }
 
@@ -47,7 +59,11 @@ export class UpdateImports {
     if (!importPath.startsWith(".")) return; // Skip non-relative imports
 
     const { moveTargetPath, newPath } = this;
-    const affectedByMove = absolutePathMatch(moveTargetPath, fileDirPath, importPath);
+    const affectedByMove = isMoveTargetAnImport(
+      moveTargetPath,
+      importPath,
+      fileDirPath
+    );
     if (affectedByMove) {
       importPathInfo.node.source.value = makeImportPath(fileDirPath, newPath);
       this.updateOccurred = true;
@@ -92,9 +108,8 @@ export const updateImports = async (moveTargetPath: string, destPath: string) =>
   const workspaceFiles = await findWorkspaceFiles();
 
   // const outerLogicFound = allFiles.filter((path) => path.includes("OuterLogic"));
-  rootLoggerHandler.logDebugMessage(` 
-  allFiles: ${JSON.stringify(workspaceFiles)}`);
   // Update imports in all files
+  [moveTargetPath, destPath] = [moveTargetPath, destPath].map(removeExtension);
   const updateImports = new UpdateImports(moveTargetPath, destPath);
   workspaceFiles.forEach(updateImports.updateFile);
 };
