@@ -6,7 +6,7 @@ export const getWorkspaceRoot = () => {
   return projectFolderPath ?? process.cwd();
 };
 
-class WorkspaceFs {
+export class WorkspaceFs {
   constructor(public workspaceRoot: string) {}
   resolve = (somePath: string) => {
     return path.resolve(this.workspaceRoot, somePath);

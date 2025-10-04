@@ -31,9 +31,10 @@ export class RemoveEmptyDir {
     const subDirPaths = await this.removeIfEmpty(dirPath);
     if (subDirPaths.length === 0) return;
 
-    subDirPaths.forEach((subDirPath) => {
-      this.removeEmptyDir(subDirPath);
-    });
+    for (const subDirPath of subDirPaths) {
+      await this.removeEmptyDir(subDirPath);
+    }
+
     await this.removeIfEmpty(dirPath);
   };
 }

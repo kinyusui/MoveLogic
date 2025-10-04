@@ -36,7 +36,7 @@ export class LoggerHandler {
   constructor(public outputChannel: Logger) {}
   show = () => {
     this.outputChannel.show(true);
-    this.logDebugMessage("Logger Activated.");
+    this.logDebugMessage("Logger Activated!");
   };
 
   logDebugMessage = (message: string) => {

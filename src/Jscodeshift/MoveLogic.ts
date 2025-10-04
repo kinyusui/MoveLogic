@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { configMakeNewPath, getFullPaths, MakeNewPath } from "../makePath";
 import { RemoveEmptyDir } from "../RemoveEmptyDir";
-import { updateImports } from "./UpdateImports";
+import { updateImports } from "./UpdateImports/UpdateImports";
 
 const makePathPossible = (filePath: string) => {
   const dirPath = path.dirname(filePath);
