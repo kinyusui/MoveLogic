@@ -32,13 +32,15 @@ export class MoveLogic {
 
   _moveDir = async (oldDirPath: string) => {
     const filePaths = getFullPaths(oldDirPath);
-    filePaths.forEach(this.moveFile);
+    for (const filePath of filePaths) {
+      await this.moveFile(filePath);
+    }
   };
 
   moveDir = async () => {
     const { oldDirPath } = this;
-    this._moveDir(oldDirPath);
-    this.removeDirer.removeEmptyDir(oldDirPath);
+    await this._moveDir(oldDirPath);
+    await this.removeDirer.removeEmptyDir(oldDirPath);
     // rootLoggerHandler.logDebugMessage(`Done Moving Dir ${oldDirPath}`);
   };
 }
