@@ -1,6 +1,7 @@
 import * as fs from "fs";
-import { ImportPather } from "../../WorkspaceFs/ImportPather";
-import { ASTImportPath, getFileInfo } from "./Helpers";
+import { configImportPather, ImportPather } from "../../WorkspaceFs/ImportPather";
+import { ASTImportPath } from "./Helpers";
+import { updateImportsGeneral } from "./UpdateNonMoveTargetImport";
 
 export class UpdateMoveTargetImports {
   constructor(
@@ -17,19 +18,20 @@ export class UpdateMoveTargetImports {
     const { getAbsolutePathOfImport, relativeFromDir } = importPather;
     const absImportPath = getAbsolutePathOfImport(importPath, moveTargetPath);
     const newPathWrongSeparator = relativeFromDir(startDirPath, absImportPath);
-    // const newImportPath = shortAndPosixify(newPathWrongSeparator);
     sourceInfo.value = newPathWrongSeparator;
-    // sourceInfo.value = makeImportPath(absNewPath, absImportPath);
   };
 
   updateImports = () => {
-    const { newPath, importPather } = this;
-    const { importPathInfos, root } = getFileInfo(newPath);
-    const absNewPath = importPather.workspaceFs.resolve(newPath);
-    const startDirPath = importPather.dirname(absNewPath);
-    importPathInfos.forEach((importPathInfo: ASTImportPath) =>
-      this.updateImport(startDirPath, importPathInfo)
-    );
+    const { importPather, updateImport, newPath } = this;
+    const { root } = updateImportsGeneral(newPath, updateImport, importPather);
     fs.writeFileSync(newPath, root.toSource());
   };
 }
+
+export const configUpdateMoveTargetImports = (
+  moveTargetPath: string,
+  newPath: string
+) => {
+  const importPather = configImportPather();
+  return new UpdateMoveTargetImports(moveTargetPath, newPath, importPather);
+};
