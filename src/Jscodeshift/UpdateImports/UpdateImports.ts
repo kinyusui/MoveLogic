@@ -1,9 +1,9 @@
 import fg from "fast-glob";
-import { ImportPather } from "../../WorkspaceFs/ImportPather";
+import { configImportPather } from "../../WorkspaceFs/ImportPather";
 import { configWorkspaceFs } from "../../WorkspaceFs/WorkspaceFs";
 import { removeExtension } from "../removeExtension";
 import { UpdateMoveTargetImports } from "./UpdateMoveTargetImports";
-import { UpdateNonMoveTargetImport } from "./UpdateNonMoveTargetImport";
+import { configUpdateNonMoveTargetImport } from "./UpdateNonMoveTargetImport";
 
 async function findFiles(
   includePatterns: string[],
@@ -33,15 +33,14 @@ export const updateImports = async (moveTargetPath: string, destPath: string) =>
 
   // const outerLogicFound = allFiles.filter((path) => path.includes("OuterLogic"));
   // Update imports in all files
-  const workspaceFs = configWorkspaceFs();
-  const importPather = new ImportPather(workspaceFs);
+  const importPather = configImportPather();
   const updateOwnImports = new UpdateMoveTargetImports(
     moveTargetPath,
     destPath,
     importPather
   );
   [moveTargetPath, destPath] = [moveTargetPath, destPath].map(removeExtension);
-  const updateImports = new UpdateNonMoveTargetImport(moveTargetPath, destPath);
+  const updateImports = configUpdateNonMoveTargetImport(moveTargetPath, destPath);
   updateOwnImports.updateImports();
   workspaceFiles.forEach(updateImports.updateFile);
 };

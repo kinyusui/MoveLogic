@@ -1,10 +1,12 @@
 import { Presets, SingleBar } from "cli-progress";
 import * as fs from "fs-extra";
 import { Project, SourceFile } from "ts-morph";
+import * as vscode from "vscode";
 import { rootLoggerHandler } from "../Extension/Logger";
 import { LoggerHandler } from "../Logger";
 import { baseMakeNewPath, Posixify, posixify } from "../makePath";
 import { RemoveEmptyDir } from "../RemoveEmptyDir";
+import { makeProject } from "./Project";
 
 export const moveFile = (file: SourceFile, oldDirPath: string, newDirPath: string) => {
   const newPath = baseMakeNewPath(file.getFilePath(), oldDirPath, newDirPath);
@@ -58,6 +60,7 @@ class MoveLogic {
 
     await removeEmptyDir.removeEmptyDir(oldDirPath);
     this.props.loggerHandler.logDebugMessage("Removed Directories");
+    await project.save();
   };
 }
 
@@ -86,11 +89,12 @@ const makeShowProgress = (log: boolean, bar: Bar): ShowProgress => {
 type MakeShowProgress = typeof makeShowProgress;
 
 type ArgConfigMoveDir = {
-  project: Project;
+  uri: vscode.Uri;
   log: boolean;
 };
-export const configMoveLogic = ({ project, log = false }: ArgConfigMoveDir) => {
+export const configMoveLogic = ({ uri, log = false }: ArgConfigMoveDir) => {
   // const logChannelName = log ? 'Kai_Move_TS_DIR' : undefined;
+  const project = makeProject(uri);
   const loggerHandler = rootLoggerHandler; //makeLoggerHandler(logChannelName);
   const bar = makeBar();
   const showProgress = makeShowProgress(log, bar);

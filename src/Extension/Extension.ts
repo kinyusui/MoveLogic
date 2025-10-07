@@ -31,14 +31,10 @@ const configHandleMove = (waitForInput: WaitForInput) => {
       // if (!project) return;
       // const moveLogic = configMoveLogic({ project: project, log: true });
       // moveLogic.moveDir(sourcePath, newDirPath);
-      // await project.save();
-      const start = performance.now();
+      //
       const moveLogic = configMoveLogic(sourcePath, newDirPath);
       moveLogic.moveDir();
-      const time = performance.now() - start;
-      vscode.window.showInformationMessage(
-        `Moved: ${sourcePath} → ${newDirPath}.` + `Took ${time}ms`
-      );
+      vscode.window.showInformationMessage(`Moved: ${sourcePath} → ${newDirPath}.`);
     } catch (err: any) {
       vscode.window.showErrorMessage(`Error: ${err.message}`);
     }

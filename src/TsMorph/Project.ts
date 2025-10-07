@@ -23,7 +23,7 @@ const getTsconfigPath = (uri: vscode.Uri) => {
 export const makeProject = (uri: vscode.Uri) => {
   // Load tsconfig.json (closest to project root)
   const tsconfigPath = getTsconfigPath(uri);
-  if (tsconfigPath === undefined) return;
+  if (tsconfigPath === undefined) return new Project();
 
   const project = new Project({
     tsConfigFilePath: tsconfigPath,

@@ -2,13 +2,7 @@ import * as fs from "fs";
 import { ASTPath, ImportDeclaration, JSCodeshift } from "jscodeshift";
 import jscodeshift from "jscodeshift/src/core";
 import * as path from "path";
-import { posixify } from "../../makePath";
 
-export const makeImportPath = (dirPath: string, newPath: string) => {
-  const newPathWrongSeparator: string = path.relative(dirPath, newPath);
-  const newRelativePath = posixify(newPathWrongSeparator);
-  return newRelativePath.startsWith(".") ? newRelativePath : `./${newRelativePath}`;
-};
 export const isMoveTargetAnImport = (
   moveTargetPath: string,
   importPathInFile: string,
