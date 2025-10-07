@@ -11,6 +11,17 @@
       {
         "command": "tsMoveHelper.move",
         "title": "Move TypeScript File/Dir"
+      },
+      {
+        "command": "tsMoveHelper.acceptQuickPickSuggestion",
+        "title": "Accept Quick Pick Suggestion"
+      }
+    ],
+    "keybindings": [
+      {
+        "key": "tab",
+        "command": "tsMoveHelper.acceptQuickPickSuggestion",
+        "when": "quickInputVisible"
       }
     ],
     "menus": {

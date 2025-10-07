@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { letQuickPickHandleInput, Retrieve } from "../Input";
+import { makeMyQuickPick, Resolve } from "../Input";
 // import { configMoveLogic } from "../Jscodeshift/MoveLogic";
 import { configMoveLogic } from "../Jscodeshift/MoveLogic";
 import { LoggerHandler } from "../Logger";
@@ -14,8 +14,9 @@ const promptNewPath: WaitForInput = async (sourcePath: string) => {
 };
 
 const promptWithSuggestions: WaitForInput = async (sourcePath: string) => {
-  const waitForInput = new Promise((resolve: Retrieve) => {
-    letQuickPickHandleInput(sourcePath, resolve);
+  const waitForInput = new Promise(async (resolve: Resolve) => {
+    const quickPick = await makeMyQuickPick(sourcePath, resolve);
+    // resolve(quickPick);
   });
   return await waitForInput;
 };
@@ -43,12 +44,18 @@ const configHandleMove = (waitForInput: WaitForInput) => {
 };
 
 const handleMove = configHandleMove(promptWithSuggestions);
+export type QuickPickElement = vscode.QuickPick<vscode.QuickPickItem>;
+class Extension {
+  constructor(public quickPick: QuickPickElement) {}
+}
 
 const configExtensionLogic = (logger: LoggerHandler) => {
   function activate(context: vscode.ExtensionContext) {
     logger.show();
     const disposable = vscode.commands.registerCommand("tsMoveHelper.move", handleMove);
     context.subscriptions.push(disposable);
+
+    // registerQuickPickCommands(context);
   }
 
   function deactivate() {
@@ -59,5 +66,10 @@ const configExtensionLogic = (logger: LoggerHandler) => {
     deactivate,
   };
 };
+
+// in your extension.ts or a dedicated commands file
+
+// --- COMMAND REGISTRATION ---
+// This should be called from your extension's `activate` function.
 
 export const { activate, deactivate } = configExtensionLogic(rootLoggerHandler);
