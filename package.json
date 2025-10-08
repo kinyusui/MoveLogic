@@ -5,7 +5,7 @@
   "engines": {
     "vscode": "^1.80.0"
   },
-  "main": "./out/Extension/Extension.js",
+  "main": "./out/Extension/RegisterExtension.js",
   "contributes": {
     "commands": [
       {

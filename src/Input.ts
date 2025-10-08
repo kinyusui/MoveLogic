@@ -58,39 +58,45 @@ const trueDirName = (dirPath: string) => {
 
 export type Resolve = (path: string) => void;
 
-const makeOnDidAccept = (quickPick: QuickPickElement, action: any) => {
+const makeOnDidAccept = (quickPick: QuickPickElement, resolve: Resolve) => {
   return () => {
     const selected = quickPick.selectedItems[0]?.label ?? quickPick.value;
     quickPick.hide();
-    action(selected);
+    resolve(selected);
   };
 };
 
-export const makeMyQuickPick = (currentPath: string, retrieve: Resolve) => {
-  const quickPick = vscode.window.createQuickPick();
-  quickPick.placeholder = currentPath; //"Enter new path for file/folder";
-  quickPick.value = currentPath;
-
-  quickPick.onDidChangeValue((pathName: string) => {
-    const posixifiedPath = posixify(pathName);
-    const dir = trueDirName(posixifiedPath);
-    const allOptions = getAllDirectories(dir);
-    quickPick.items = allOptions.map((label) => ({ label }));
-    vscode.window.showInformationMessage(
-      `path: ${pathName}, posix: ${posixifiedPath} ___ ${JSON.stringify(
-        quickPick.items
-      )}`
-    );
-  });
-
-  quickPick.onDidChangeActive((item) => {});
-
-  quickPick.onDidAccept(makeOnDidAccept(quickPick, retrieve));
-
-  quickPick.ignoreFocusOut = true;
-
-  quickPick.show();
-  return {
-    quickPick: quickPick,
+export class MyQuickPick {
+  constructor(public quickPick: QuickPickElement = this.makeSkeleton()) {}
+  getInput = async () => {
+    const { quickPick } = this;
+    const input = new Promise((resolve: Resolve) => {
+      const onDidAccept = makeOnDidAccept(quickPick, resolve);
+      quickPick.onDidAccept(onDidAccept);
+    });
+    return await input;
   };
+
+  makeSkeleton = () => {
+    const quickPick = vscode.window.createQuickPick();
+    quickPick.placeholder = "Enter new path for file/folder";
+
+    quickPick.onDidChangeValue((pathName: string) => {
+      const posixifiedPath = posixify(pathName);
+      const dir = trueDirName(posixifiedPath);
+      const allOptions = getAllDirectories(dir);
+      quickPick.items = allOptions.map((label) => ({ label }));
+      vscode.window.showInformationMessage(
+        `path: ${pathName}, posix: ${posixifiedPath} ___ ${JSON.stringify(
+          quickPick.items
+        )}`
+      );
+    });
+    quickPick.ignoreFocusOut = true;
+    return quickPick;
+  };
+}
+
+export const makeMyQuickPick = () => {
+  return new MyQuickPick();
 };

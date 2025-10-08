@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 
 type ActiveQuickPick = vscode.QuickPick<vscode.QuickPickItem> | undefined;
 
-const register = (activeQuickPick: ActiveQuickPick) => {
+export const handleUseSuggest = (activeQuickPick: ActiveQuickPick) => {
   // This is the logic that runs when the user presses Tab.
   if (!activeQuickPick) {
     return; // No active QuickPick, do nothing.
@@ -17,14 +17,14 @@ const register = (activeQuickPick: ActiveQuickPick) => {
   }
 };
 
-export function registerQuickPickCommands(
-  context: vscode.ExtensionContext,
-  activeQuickPick: ActiveQuickPick
-) {
-  const disposable = vscode.commands.registerCommand(
-    "tsMoveHelper.acceptQuickPickSuggestion",
-    () => register(activeQuickPick)
-  );
+// export function registerQuickPickCommands(
+//   context: vscode.ExtensionContext,
+//   activeQuickPick: ActiveQuickPick
+// ) {
+//   const disposable = vscode.commands.registerCommand(
+//     "tsMoveHelper.acceptQuickPickSuggestion",
+//     () => register(activeQuickPick)
+//   );
 
-  context.subscriptions.push(disposable);
-}
+//   context.subscriptions.push(disposable);
+// }
