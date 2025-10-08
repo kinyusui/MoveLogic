@@ -7,7 +7,7 @@ const configExtensionLogic = (logger: LoggerHandler) => {
   function activate(context: vscode.ExtensionContext) {
     const extension = configExtension();
     extension.register(context);
-    logger.show();
+    // logger.show();
     // registerQuickPickCommands(context);
   }
 

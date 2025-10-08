@@ -6,6 +6,9 @@
     "vscode": "^1.80.0"
   },
   "main": "./out/Extension/RegisterExtension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "contributes": {
     "commands": [
       {

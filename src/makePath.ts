@@ -9,7 +9,6 @@ export const getLastDir = (filePath: string) => {
   const endingIsDir = !lastPart.includes(".");
 
   const actualPathToDir = endingIsDir ? filePath : path.dirname(filePath);
-
   return path.basename(actualPathToDir);
 };
 

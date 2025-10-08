@@ -33,10 +33,11 @@ export function logDebugMessage(outputChannel: Logger, message: string) {
 }
 
 export class LoggerHandler {
-  constructor(public outputChannel: Logger) {}
+  constructor(public outputChannel: Logger) {
+    this.logDebugMessage("Logger Activated!");
+  }
   show = () => {
     this.outputChannel.show(true);
-    this.logDebugMessage("Logger Activated!");
   };
 
   logDebugMessage = (message: string) => {

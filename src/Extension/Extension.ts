@@ -31,11 +31,8 @@ const executeMove = async (
     oldDirPath: oldDirPath,
     newDirPath: realNewDirPath,
   });
-  if (isDir) {
-    await moveLogic.moveDir();
-  } else {
-    await moveLogic.moveFile(sourcePath);
-  }
+  const { moveDir, moveFile } = moveLogic;
+  isDir ? await moveDir() : await moveFile(sourcePath);
 };
 
 export class Extension {
@@ -49,7 +46,7 @@ export class Extension {
 
     executeMove(isDir, sourcePath, realNewDirPath);
 
-    const message = `\nMoved: ${sourcePath}. ` + `\n→→→To: ${realNewDirPath}.`;
+    const message = `\nMoved→: ${sourcePath}. ` + `\nTo Dir: ${realNewDirPath}.`;
     this.loggerHandler.logDebugMessage(message);
     // vscode.window.showInformationMessage(
     //   `Moved: ${sourceDirPath} → ${realNewDirPath}.`
