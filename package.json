@@ -21,7 +21,7 @@
       {
         "key": "tab",
         "command": "tsMoveHelper.acceptQuickPickSuggestion",
-        "when": "quickInputVisible"
+        "when": "inQuickOpen"
       }
     ],
     "menus": {

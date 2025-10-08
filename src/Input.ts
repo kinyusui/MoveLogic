@@ -67,9 +67,10 @@ const makeOnDidAccept = (quickPick: QuickPickElement, resolve: Resolve) => {
 };
 
 export class MyQuickPick {
-  constructor(public quickPick: QuickPickElement = this.makeSkeleton()) {}
-  getInput = async () => {
+  constructor(public quickPick: QuickPickElement = MyQuickPick.makeSkeleton()) {}
+  getInput = async (startPath: string) => {
     const { quickPick } = this;
+    quickPick.value = startPath;
     const input = new Promise((resolve: Resolve) => {
       const onDidAccept = makeOnDidAccept(quickPick, resolve);
       quickPick.onDidAccept(onDidAccept);
@@ -77,7 +78,7 @@ export class MyQuickPick {
     return await input;
   };
 
-  makeSkeleton = () => {
+  static makeSkeleton = () => {
     const quickPick = vscode.window.createQuickPick();
     quickPick.placeholder = "Enter new path for file/folder";
 
@@ -92,9 +93,13 @@ export class MyQuickPick {
         )}`
       );
     });
+
     quickPick.ignoreFocusOut = true;
     return quickPick;
   };
+
+  show = () => this.quickPick.show();
+  hide = () => this.quickPick.hide();
 }
 
 export const makeMyQuickPick = () => {
