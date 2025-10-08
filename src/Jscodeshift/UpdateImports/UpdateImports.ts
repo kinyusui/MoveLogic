@@ -12,3 +12,5 @@ export const updateImports = async (moveTargetPath: string, destPath: string) =>
   const workspaceFiles = await getProjectFiles();
   workspaceFiles.forEach(updateImports.updateFile);
 };
+
+export type UpdateImports = typeof updateImports;

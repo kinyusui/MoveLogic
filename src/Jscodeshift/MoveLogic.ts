@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { configMakeNewPath, getFullPaths, MakeNewPath } from "../makePath";
 import { RemoveEmptyDir } from "../RemoveEmptyDir";
-import { updateImports } from "./UpdateImports/UpdateImports";
+import { updateImports, UpdateImports } from "./UpdateImports/UpdateImports";
 
 const makePathPossible = (filePath: string) => {
   const dirPath = path.dirname(filePath);
@@ -13,20 +13,23 @@ const makePathPossible = (filePath: string) => {
   }
 };
 
+type Props = {
+  oldDirPath: string;
+  makeNewPath: MakeNewPath;
+  removeDirer: RemoveEmptyDir;
+  updateImports: UpdateImports;
+};
+
 export class MoveLogic {
-  constructor(
-    public oldDirPath: string,
-    public makeNewPath: MakeNewPath,
-    public removeDirer: RemoveEmptyDir
-  ) {}
+  constructor(public props: Props) {}
 
   moveFile = async (sourceFile: string) => {
     // Normalize paths
+    const { makeNewPath, updateImports } = this.props;
     const moveTargetPath: string = path.normalize(sourceFile);
-    const endFilePath = this.makeNewPath(sourceFile);
+    const endFilePath = makeNewPath(sourceFile);
     makePathPossible(endFilePath);
     await fs.promises.rename(moveTargetPath, endFilePath);
-    // rootLoggerHandler.logDebugMessage(`Moved ${moveTargetPath} to ${endFilePath}`);
     await updateImports(moveTargetPath, endFilePath);
   };
 
@@ -38,15 +41,17 @@ export class MoveLogic {
   };
 
   moveDir = async () => {
-    const { oldDirPath } = this;
+    const { oldDirPath, removeDirer } = this.props;
     await this._moveDir(oldDirPath);
-    await this.removeDirer.removeEmptyDir(oldDirPath);
-    // rootLoggerHandler.logDebugMessage(`Done Moving Dir ${oldDirPath}`);
+    await removeDirer.removeEmptyDir(oldDirPath);
   };
 }
-
-export const configMoveLogic = (oldDirPath: string, newDirPath: string) => {
+type Config = {
+  oldDirPath: string;
+  newDirPath: string;
+};
+export const configMoveLogic = ({ oldDirPath, newDirPath }: Config) => {
   const removeDirer = new RemoveEmptyDir();
   const makeNewPath = configMakeNewPath(oldDirPath, newDirPath);
-  return new MoveLogic(oldDirPath, makeNewPath, removeDirer);
+  return new MoveLogic({ oldDirPath, makeNewPath, removeDirer, updateImports });
 };

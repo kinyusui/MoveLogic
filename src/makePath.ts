@@ -3,6 +3,16 @@ import * as fs from "fs-extra";
 import * as path from "path";
 import { fillDefaults } from "./Dict";
 
+export const getLastDir = (filePath: string) => {
+  const pathParts = filePath.split(path.sep);
+  const lastPart = pathParts[pathParts.length - 1];
+  const endingIsDir = !lastPart.includes(".");
+
+  const actualPathToDir = endingIsDir ? filePath : path.dirname(filePath);
+
+  return path.basename(actualPathToDir);
+};
+
 export const baseMakeNewPath = (
   filePath: string,
   oldDirPath: string,
@@ -27,11 +37,11 @@ export function getDirname(functionWrappers: number = 1): string {
   return path.dirname(callSiteFilePath);
 }
 
-export const getFullPaths = (dir: string) => {
+export const getFullPaths = (dirPath: string) => {
   const fileNames: FullPath[] = [];
-  const files: fs.Dirent[] = fs.readdirSync(dir, { withFileTypes: true });
+  const files: fs.Dirent[] = fs.readdirSync(dirPath, { withFileTypes: true });
   for (const file of files) {
-    const fullPath = path.join(dir, file.name);
+    const fullPath = path.join(dirPath, file.name);
     if (file.isFile()) {
       fileNames.push(fullPath);
     } else if (file.isDirectory()) {

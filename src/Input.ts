@@ -87,11 +87,11 @@ export class MyQuickPick {
       const dir = trueDirName(posixifiedPath);
       const allOptions = getAllDirectories(dir);
       quickPick.items = allOptions.map((label) => ({ label }));
-      vscode.window.showInformationMessage(
-        `path: ${pathName}, posix: ${posixifiedPath} ___ ${JSON.stringify(
-          quickPick.items
-        )}`
-      );
+      // vscode.window.showInformationMessage(
+      //   `path: ${pathName}, posix: ${posixifiedPath} ___ ${JSON.stringify(
+      //     quickPick.items
+      //   )}`
+      // );
     });
 
     quickPick.ignoreFocusOut = true;
