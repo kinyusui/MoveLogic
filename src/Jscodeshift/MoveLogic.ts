@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import { configMyStatusBar, MyStatusBar } from "../Extension/MyStatusBar";
 import { configMakeNewPath, getFullPaths, MakeNewPath } from "../makePath";
 import { RemoveEmptyDir } from "../RemoveEmptyDir";
 import { updateImports, UpdateImports } from "./UpdateImports/UpdateImports";
@@ -18,12 +19,12 @@ type Props = {
   makeNewPath: MakeNewPath;
   removeDirer: RemoveEmptyDir;
   updateImports: UpdateImports;
+  statusBar: MyStatusBar;
 };
 
 export class MoveLogic {
   constructor(public props: Props) {}
-
-  moveFile = async (sourceFile: string) => {
+  _moveFile = async (sourceFile: string) => {
     // Normalize paths
     const { makeNewPath, updateImports } = this.props;
     const moveTargetPath: string = path.normalize(sourceFile);
@@ -31,13 +32,27 @@ export class MoveLogic {
     makePathPossible(endFilePath);
     await fs.promises.rename(moveTargetPath, endFilePath);
     await updateImports(moveTargetPath, endFilePath);
+
+    this.props.statusBar.updateProgress();
+  };
+
+  moveFile = async (sourceFile: string) => {
+    const { statusBar } = this.props;
+    statusBar.start(1);
+    await this._moveFile(sourceFile);
+    statusBar.hide();
   };
 
   _moveDir = async (oldDirPath: string) => {
     const filePaths = getFullPaths(oldDirPath);
+    const { statusBar } = this.props;
+    statusBar.start(filePaths.length);
+
     for (const filePath of filePaths) {
-      await this.moveFile(filePath);
+      await this._moveFile(filePath);
     }
+
+    statusBar.hide();
   };
 
   moveDir = async () => {
@@ -46,6 +61,15 @@ export class MoveLogic {
     await removeDirer.removeEmptyDir(oldDirPath);
   };
 }
+
+const configMakeMoveMessage = (total: number) => {
+  return (progress: number) => {
+    const percent = 100 * (progress / total);
+    const shortPercent = percent.toFixed(3);
+    return `Moved ${progress}/${total} item(s). ${shortPercent}`;
+  };
+};
+
 type Config = {
   oldDirPath: string;
   newDirPath: string;
@@ -53,5 +77,13 @@ type Config = {
 export const configMoveLogic = ({ oldDirPath, newDirPath }: Config) => {
   const removeDirer = new RemoveEmptyDir();
   const makeNewPath = configMakeNewPath(oldDirPath, newDirPath);
-  return new MoveLogic({ oldDirPath, makeNewPath, removeDirer, updateImports });
+  const statusBar = configMyStatusBar({ configMessageMaker: configMakeMoveMessage });
+
+  return new MoveLogic({
+    oldDirPath,
+    makeNewPath,
+    removeDirer,
+    updateImports,
+    statusBar,
+  });
 };
