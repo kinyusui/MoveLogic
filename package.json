@@ -1,9 +1,25 @@
 {
   "name": "ts-move-helper",
   "displayName": "TS Move Helper",
+  "publisher": "kinyusui",
+  "description": "Move many TS files",
+  "icon": "./TS_Icon.png",
+  "repository": "https://github.com/kinyusui/MoveLogic",
+  "categories": [
+    "Formatters",
+    "Other"
+  ],
+  "license": "UNLICENSED",
+  "keywords": [
+    "Typescript",
+    "TS",
+    "ts",
+    "move",
+    "multi"
+  ],
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.80.0"
+    "vscode": "^1.95.0"
   },
   "main": "./out/Extension/RegisterExtension.js",
   "activationEvents": [
@@ -31,7 +47,6 @@
       "explorer/context": [
         {
           "command": "tsMoveHelper.move",
-          "when": "explorerResourceIsFolder == true",
           "group": "navigation"
         }
       ]
@@ -51,7 +66,6 @@
     "cli-progress": "^3.12.0",
     "fs-extra": "^11.2.0",
     "jscodeshift": "^17.3.0",
-    "react": "18.3.1",
     "ts-morph": "^22.0.0",
     "tsx": "^4.19.3"
   },
