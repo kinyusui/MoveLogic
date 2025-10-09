@@ -16,6 +16,13 @@ export const handleUseSuggest = (activeQuickPick: ActiveQuickPick) => {
     activeQuickPick.value = activeItem.label;
   }
 };
+export type HandleUseSuggest = typeof handleUseSuggest;
+
+export const configHandleUseSuggest = (activeQuickPick: ActiveQuickPick) => {
+  return () => {
+    handleUseSuggest(activeQuickPick);
+  };
+};
 
 // export function registerQuickPickCommands(
 //   context: vscode.ExtensionContext,
