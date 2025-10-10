@@ -17,7 +17,6 @@ type Props = {
   progress: number;
   configMessageMaker: ConfigMessageMaker;
   messageMaker: MessageMaker;
-  text: string;
   resolve: Resolve;
   reject: Reject;
   controlWithProgress: ControlWithProgress | undefined;
@@ -26,13 +25,15 @@ type Props = {
 export class MyStatusBar {
   constructor(public props: Props) {}
 
+  giveControlToStatusBar = (resolve: Resolve, reject: Reject) => {
+    this.props.resolve = resolve;
+    this.props.reject = reject;
+  };
+
   start = (totalItems: number) => {
     this.props.reject();
 
-    const assignWayToEnd = new Promise((resolve: Resolve, reject: Reject) => {
-      this.props.resolve = resolve;
-      this.props.reject = reject;
-    });
+    const existUntilBarEndsPromise = new Promise(this.giveControlToStatusBar);
     const displayUntilDone = vscode.window.withProgress(
       {
         location: vscode.ProgressLocation.Notification,
@@ -41,7 +42,7 @@ export class MyStatusBar {
       },
       async (progress, cancelToken) => {
         this.props.controlWithProgress = { progress, cancelToken };
-        await assignWayToEnd;
+        await existUntilBarEndsPromise;
       }
     );
     this.props.progress = 0;
@@ -71,7 +72,6 @@ export const configMyStatusBar = ({ configMessageMaker }: SimpleConfig) => {
     progress: 0,
     configMessageMaker: configMessageMaker,
     messageMaker: messageMaker,
-    text: "",
     reject: doNothing,
     resolve: doNothing,
     controlWithProgress: undefined,
