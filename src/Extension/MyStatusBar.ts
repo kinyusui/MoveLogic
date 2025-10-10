@@ -3,14 +3,8 @@ import * as vscode from "vscode";
 type ConfigMessageMaker = (total: number) => (progress: number) => string;
 type MessageMaker = ReturnType<ConfigMessageMaker>;
 
-type Props = {
-  progress: number;
-  configMessageMaker: ConfigMessageMaker;
-  messageMaker: MessageMaker;
-  text: string;
-};
-
 type Resolve = (end: boolean) => void;
+type Reject = () => void;
 type ControlWithProgress = {
   progress: vscode.Progress<{
     message?: string;
@@ -19,16 +13,25 @@ type ControlWithProgress = {
   cancelToken: vscode.CancellationToken;
 };
 
-export class MyStatusBar {
+type Props = {
+  progress: number;
+  configMessageMaker: ConfigMessageMaker;
+  messageMaker: MessageMaker;
+  text: string;
   resolve: Resolve;
+  reject: Reject;
   controlWithProgress: ControlWithProgress | undefined;
-  constructor(public props: Props) {
-    this.resolve = () => {};
-  }
+};
+
+export class MyStatusBar {
+  constructor(public props: Props) {}
 
   start = (totalItems: number) => {
-    const assignWayToEnd = new Promise((resolve: Resolve) => {
-      this.resolve = resolve;
+    this.props.reject();
+
+    const assignWayToEnd = new Promise((resolve: Resolve, reject: Reject) => {
+      this.props.resolve = resolve;
+      this.props.reject = reject;
     });
     const displayUntilDone = vscode.window.withProgress(
       {
@@ -37,7 +40,7 @@ export class MyStatusBar {
         cancellable: true,
       },
       async (progress, cancelToken) => {
-        this.controlWithProgress = { progress, cancelToken };
+        this.props.controlWithProgress = { progress, cancelToken };
         await assignWayToEnd;
       }
     );
@@ -49,24 +52,28 @@ export class MyStatusBar {
     const { messageMaker } = this.props;
     this.props.progress += amount;
     const text = messageMaker(this.props.progress);
-    this.controlWithProgress?.progress?.report({
+    this.props.controlWithProgress?.progress?.report({
       message: text,
       increment: this.props.progress,
     });
   };
 
   end = () => {
-    this.resolve(true);
+    this.props.resolve(true);
   };
 }
 
 type SimpleConfig = { configMessageMaker: ConfigMessageMaker };
 export const configMyStatusBar = ({ configMessageMaker }: SimpleConfig) => {
   const messageMaker = configMessageMaker(0);
+  const doNothing = () => {};
   return new MyStatusBar({
     progress: 0,
     configMessageMaker: configMessageMaker,
     messageMaker: messageMaker,
     text: "",
+    reject: doNothing,
+    resolve: doNothing,
+    controlWithProgress: undefined,
   });
 };

@@ -41,8 +41,11 @@ export class MoveLogic {
   moveFile = async (sourceFile: string) => {
     const { statusBar } = this.props;
     statusBar.start(1);
-    await this._moveFile(sourceFile);
-    statusBar.end();
+    try {
+      await this._moveFile(sourceFile);
+    } finally {
+      statusBar.end();
+    }
   };
 
   _moveDir = async (oldDirPath: string) => {
@@ -50,11 +53,13 @@ export class MoveLogic {
     const { statusBar } = this.props;
     statusBar.start(filePaths.length);
 
-    for (const filePath of filePaths) {
-      await this._moveFile(filePath);
+    try {
+      for (const filePath of filePaths) {
+        await this._moveFile(filePath);
+      }
+    } finally {
+      statusBar.end();
     }
-
-    statusBar.end();
   };
 
   moveDir = async () => {
