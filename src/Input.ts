@@ -87,6 +87,10 @@ export class MyQuickPick {
       const dir = trueDirName(posixifiedPath);
       const allOptions = getAllDirectories(dir);
       quickPick.items = allOptions.map((label) => ({ label }));
+      if (quickPick.items.length === 0) {
+        quickPick.selectedItems = [];
+        quickPick.activeItems = [];
+      }
     });
 
     quickPick.ignoreFocusOut = true;
@@ -97,6 +101,6 @@ export class MyQuickPick {
   hide = () => this.quickPick.hide();
 }
 
-export const makeMyQuickPick = () => {
+export const configMyQuickPick = () => {
   return new MyQuickPick();
 };

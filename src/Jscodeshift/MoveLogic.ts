@@ -13,6 +13,7 @@ const makePathPossible = (filePath: string) => {
     fs.mkdirSync(dirPath);
   }
 };
+type MakePathPossible = typeof makePathPossible;
 
 type Props = {
   oldDirPath: string;
@@ -20,27 +21,28 @@ type Props = {
   removeDirer: RemoveEmptyDir;
   updateImports: UpdateImports;
   statusBar: MyStatusBar;
+  makePathPossible: MakePathPossible;
 };
 
 export class MoveLogic {
   constructor(public props: Props) {}
   _moveFile = async (sourceFile: string) => {
     // Normalize paths
-    const { makeNewPath, updateImports } = this.props;
+    const { makeNewPath, updateImports, makePathPossible, statusBar } = this.props;
     const moveTargetPath: string = path.normalize(sourceFile);
     const endFilePath = makeNewPath(sourceFile);
     makePathPossible(endFilePath);
     await fs.promises.rename(moveTargetPath, endFilePath);
     await updateImports(moveTargetPath, endFilePath);
 
-    this.props.statusBar.updateProgress();
+    statusBar.updateProgress();
   };
 
   moveFile = async (sourceFile: string) => {
     const { statusBar } = this.props;
     statusBar.start(1);
     await this._moveFile(sourceFile);
-    statusBar.hide();
+    statusBar.end();
   };
 
   _moveDir = async (oldDirPath: string) => {
@@ -52,7 +54,7 @@ export class MoveLogic {
       await this._moveFile(filePath);
     }
 
-    statusBar.hide();
+    statusBar.end();
   };
 
   moveDir = async () => {
@@ -85,5 +87,6 @@ export const configMoveLogic = ({ oldDirPath, newDirPath }: Config) => {
     removeDirer,
     updateImports,
     statusBar,
+    makePathPossible: makePathPossible,
   });
 };

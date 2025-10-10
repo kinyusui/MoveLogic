@@ -4,46 +4,69 @@ type ConfigMessageMaker = (total: number) => (progress: number) => string;
 type MessageMaker = ReturnType<ConfigMessageMaker>;
 
 type Props = {
-  statusBar: vscode.StatusBarItem;
   progress: number;
   configMessageMaker: ConfigMessageMaker;
   messageMaker: MessageMaker;
+  text: string;
+};
+
+type Resolve = (end: boolean) => void;
+type ControlWithProgress = {
+  progress: vscode.Progress<{
+    message?: string;
+    increment?: number;
+  }>;
+  cancelToken: vscode.CancellationToken;
 };
 
 export class MyStatusBar {
-  constructor(public props: Props) {}
-  show = () => {
-    const { statusBar } = this.props;
-    statusBar.text = `Started Moving Files.`;
-    statusBar.show();
-    this.props.progress = 0;
-  };
+  resolve: Resolve;
+  controlWithProgress: ControlWithProgress | undefined;
+  constructor(public props: Props) {
+    this.resolve = () => {};
+  }
 
   start = (totalItems: number) => {
-    this.show();
+    const assignWayToEnd = new Promise((resolve: Resolve) => {
+      this.resolve = resolve;
+    });
+    const displayUntilDone = vscode.window.withProgress(
+      {
+        location: vscode.ProgressLocation.Notification,
+        title: "Moving Files.",
+        cancellable: true,
+      },
+      async (progress, cancelToken) => {
+        this.controlWithProgress = { progress, cancelToken };
+        await assignWayToEnd;
+      }
+    );
+    this.props.progress = 0;
     this.props.messageMaker = this.props.configMessageMaker(totalItems);
   };
 
   updateProgress = (amount: number = 1) => {
-    const { statusBar, messageMaker } = this.props;
+    const { messageMaker } = this.props;
     this.props.progress += amount;
-    statusBar.text = messageMaker(this.props.progress);
+    const text = messageMaker(this.props.progress);
+    this.controlWithProgress?.progress?.report({
+      message: text,
+      increment: this.props.progress,
+    });
   };
 
-  hide = () => this.props.statusBar.hide();
+  end = () => {
+    this.resolve(true);
+  };
 }
 
 type SimpleConfig = { configMessageMaker: ConfigMessageMaker };
 export const configMyStatusBar = ({ configMessageMaker }: SimpleConfig) => {
-  const statusBar = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Left,
-    100
-  );
   const messageMaker = configMessageMaker(0);
   return new MyStatusBar({
-    statusBar: statusBar,
     progress: 0,
     configMessageMaker: configMessageMaker,
     messageMaker: messageMaker,
+    text: "",
   });
 };

@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 // import { configMoveLogic } from "../Jscodeshift/MoveLogic";
-import { makeMyQuickPick } from "../Input";
+import { configMyQuickPick } from "../Input";
 import { configHandleMove, HandleMove } from "./HandleMove";
 import { configHandleUseSuggest, HandleUseSuggest } from "./HandleUseSuggest";
 import { rootLoggerHandler } from "./Logger";
@@ -30,7 +30,7 @@ export class Extension {
 }
 
 export const configExtension = () => {
-  const myQuickPick = makeMyQuickPick();
+  const myQuickPick = configMyQuickPick();
   const systemControl = {
     myQuickPick: myQuickPick,
     loggerHandler: rootLoggerHandler,
