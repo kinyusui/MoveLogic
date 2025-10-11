@@ -1,8 +1,8 @@
-import * as fs from "fs";
-import * as path from "path";
 import { configMyStatusBar, MyStatusBar } from "../Extension/MyStatusBar";
+import { fs, path } from "../MakeDependencyEasy";
 import { configMakeNewPath, getFullPaths, MakeNewPath } from "../makePath";
 import { RemoveEmptyDir } from "../RemoveEmptyDir";
+import { MyFs } from "../WorkspaceFs/MyFS";
 import { updateImports, UpdateImports } from "./UpdateImports/UpdateImports";
 
 const makePathPossible = (filePath: string) => {
@@ -36,7 +36,9 @@ export class MoveLogic {
     const moveTargetPath: string = path.normalize(sourceFile);
     const endFilePath = makeNewPath(sourceFile);
     makePathPossible(endFilePath);
-    await fs.promises.rename(moveTargetPath, endFilePath);
+
+    // await fs.promises.rename(moveTargetPath, endFilePath);
+    await MyFs.rename(moveTargetPath, endFilePath);
     await updateImports(moveTargetPath, endFilePath);
 
     statusBar.updateProgress();

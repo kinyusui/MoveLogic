@@ -1,5 +1,6 @@
 import * as fs from "fs-extra";
 import path from "path";
+import { MyFs } from "./WorkspaceFs/MyFS";
 
 export class RemoveEmptyDir {
   getSubDirPaths = async (dirPath: string) => {
@@ -22,7 +23,7 @@ export class RemoveEmptyDir {
   removeIfEmpty = async (dirPath: string) => {
     const { subDirPaths, subPaths } = await this.getSubDirPaths(dirPath);
     if (subPaths.length === 0) {
-      await fs.rmdir(dirPath);
+      await MyFs.delete(dirPath);
     }
     return subDirPaths;
   };
