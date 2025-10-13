@@ -1,8 +1,13 @@
 import * as fs from "fs-extra";
 import path from "path";
-import { MyFs } from "./WorkspaceFs/MyFS";
+import { rootUndoableEdit, UndoableEdit } from "./WorkspaceFs/UndoableEdit";
+
+type Props = {
+  undoableEdit: UndoableEdit;
+};
 
 export class RemoveEmptyDir {
+  constructor(public props: Props) {}
   getSubDirPaths = async (dirPath: string) => {
     const subNames = await fs.readdir(dirPath);
     const subPaths = subNames.map((subName) => path.join(dirPath, subName));
@@ -22,8 +27,9 @@ export class RemoveEmptyDir {
 
   removeIfEmpty = async (dirPath: string) => {
     const { subDirPaths, subPaths } = await this.getSubDirPaths(dirPath);
+    const { undoableEdit } = this.props;
     if (subPaths.length === 0) {
-      await MyFs.delete(dirPath);
+      await undoableEdit.deleteFile(dirPath);
     }
     return subDirPaths;
   };
@@ -39,3 +45,13 @@ export class RemoveEmptyDir {
     await this.removeIfEmpty(dirPath);
   };
 }
+
+type Config = {
+  undoableEdit: UndoableEdit;
+};
+
+export const configRemoveEmtpyDir = (config: Config | undefined = undefined) => {
+  return new RemoveEmptyDir({
+    undoableEdit: rootUndoableEdit,
+  });
+};

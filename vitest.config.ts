@@ -1,3 +1,3 @@
 export default {
-  test: { setupFiles: "./vitest.setup.ts" },
+  test: { setupFiles: "./mock/vitest.setup.ts" },
 };

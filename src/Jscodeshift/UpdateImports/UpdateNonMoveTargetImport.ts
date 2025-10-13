@@ -1,5 +1,5 @@
-import * as fs from "fs";
 import { configImportPather, ImportPather } from "../../WorkspaceFs/ImportPather";
+import { rootUndoableEdit } from "../../WorkspaceFs/UndoableEdit";
 import { removeExtension } from "../removeExtension";
 import {
   ASTImportPath,
@@ -9,7 +9,7 @@ import {
 } from "./Helpers";
 
 type UpdateImport = (startDirPath: string, importPathInfo: ASTImportPath) => void;
-export const updateImportsGeneral = (
+export const updatePathUsingUpdater = (
   startPath: string,
   updater: UpdateImport,
   importPather: ImportPather
@@ -51,10 +51,10 @@ export class UpdateNonMoveTargetImport {
     }
   };
 
-  updateFile = (filePath: string) => {
+  updateFile = async (filePath: string) => {
     const { updateImport, importPather } = this;
-    const { root } = updateImportsGeneral(filePath, updateImport, importPather);
-    if (this.updateOccurred) fs.writeFileSync(filePath, root.toSource());
+    const { root } = updatePathUsingUpdater(filePath, updateImport, importPather);
+    if (this.updateOccurred) await rootUndoableEdit.rewrite(filePath, root.toSource()); //fs.writeFileSync(filePath, root.toSource());
   };
 }
 

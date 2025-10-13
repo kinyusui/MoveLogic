@@ -16,13 +16,13 @@ const getNewDirPath = (isDir: boolean, sourcePath: string, newDirPath: string) =
 type ContextBad = { isDir: boolean; fileDirPath: undefined; noWork: true };
 type Context = { isDir: boolean; fileDirPath: string; noWork: boolean };
 const getMoveContext = (sourcePath: string, inputDirPath: string) => {
-  const context: ContextBad = {
+  const noWorkNeeded: ContextBad = {
     isDir: false,
     fileDirPath: undefined,
     noWork: true,
   };
   const notExist = !fs.existsSync(sourcePath);
-  if (notExist) return context;
+  if (notExist) return noWorkNeeded;
 
   const isDir = fs.statSync(sourcePath).isDirectory();
   const fileDirPath = getNewDirPath(isDir, sourcePath, inputDirPath);
@@ -63,10 +63,11 @@ export class HandleMove {
 
   handleMove = async (uri: Uri, selectedUris: Uri[]) => {
     const { myQuickPick } = this.props;
-    myQuickPick.show();
     try {
+      myQuickPick.show();
       const parentDir = path.dirname(uri.fsPath);
       const inputDirPath = await myQuickPick.getInput(parentDir);
+      // rootLoggerHandler.logDebugMessage(inputDirPath);
       for (const oneUri of selectedUris) {
         await this.mainMoveLogic(oneUri, inputDirPath);
       }

@@ -5,7 +5,7 @@ import * as vscode from "vscode";
 import { rootLoggerHandler } from "../Extension/Logger";
 import { LoggerHandler } from "../Logger";
 import { baseMakeNewPath, Posixify, posixify } from "../makePath";
-import { RemoveEmptyDir } from "../RemoveEmptyDir";
+import { configRemoveEmtpyDir, RemoveEmptyDir } from "../RemoveEmptyDir";
 import { makeProject } from "./Project";
 
 export const moveFile = (file: SourceFile, oldDirPath: string, newDirPath: string) => {
@@ -98,7 +98,7 @@ export const configMoveLogic = ({ uri, log = false }: ArgConfigMoveDir) => {
   const loggerHandler = rootLoggerHandler; //makeLoggerHandler(logChannelName);
   const bar = makeBar();
   const showProgress = makeShowProgress(log, bar);
-  const removeEmptyDir = new RemoveEmptyDir();
+  const removeEmptyDir = configRemoveEmtpyDir();
   const moveDir = new MoveLogic({
     project,
     moveFile,

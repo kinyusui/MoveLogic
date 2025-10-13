@@ -1,8 +1,8 @@
 import { configMyStatusBar, MyStatusBar } from "../Extension/MyStatusBar";
 import { fs, path } from "../MakeDependencyEasy";
 import { configMakeNewPath, getFullPaths, MakeNewPath } from "../makePath";
-import { RemoveEmptyDir } from "../RemoveEmptyDir";
-import { MyFs } from "../WorkspaceFs/MyFS";
+import { configRemoveEmtpyDir, RemoveEmptyDir } from "../RemoveEmptyDir";
+import { rootUndoableEdit, UndoableEdit } from "../WorkspaceFs/UndoableEdit";
 import { updateImports, UpdateImports } from "./UpdateImports/UpdateImports";
 
 const makePathPossible = (filePath: string) => {
@@ -22,6 +22,7 @@ type Props = {
   updateImports: UpdateImports;
   statusBar: MyStatusBar;
   makePathPossible: MakePathPossible;
+  undoableEdit: UndoableEdit;
 };
 
 type Args<TArg> = TArg[];
@@ -33,13 +34,17 @@ export class MoveLogic {
   _moveFile = async (sourceFile: string) => {
     // Normalize paths
     const { makeNewPath, updateImports, makePathPossible, statusBar } = this.props;
+    const { undoableEdit } = this.props;
     const moveTargetPath: string = path.normalize(sourceFile);
     const endFilePath = makeNewPath(sourceFile);
     makePathPossible(endFilePath);
 
     // await fs.promises.rename(moveTargetPath, endFilePath);
-    await MyFs.rename(moveTargetPath, endFilePath);
+    // await MyFs.rename(moveTargetPath, endFilePath);
+    await undoableEdit.rename(moveTargetPath, endFilePath);
+    // await undoableEdit.createFile(endFilePath);
     await updateImports(moveTargetPath, endFilePath);
+    // await undoableEdit.delete(moveTargetPath);
 
     statusBar.updateProgress();
   };
@@ -88,16 +93,18 @@ type Config = {
   newDirPath: string;
 };
 export const configMoveLogic = ({ oldDirPath, newDirPath }: Config) => {
-  const removeDirer = new RemoveEmptyDir();
+  const undoableEdit = rootUndoableEdit; //configUndoableEdit();
+  const removeDirer = configRemoveEmtpyDir({ undoableEdit });
   const makeNewPath = configMakeNewPath(oldDirPath, newDirPath);
   const statusBar = configMyStatusBar({ configMessageMaker: configMakeMoveMessage });
 
   return new MoveLogic({
     oldDirPath,
     makeNewPath,
-    removeDirer,
+    removeDirer: removeDirer,
     updateImports,
     statusBar,
     makePathPossible: makePathPossible,
+    undoableEdit: undoableEdit,
   });
 };
