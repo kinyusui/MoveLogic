@@ -60,9 +60,14 @@ export type Resolve = (path: string) => void;
 
 const makeOnDidAccept = (quickPick: QuickPickElement, resolve: Resolve) => {
   return () => {
-    const selected = quickPick.selectedItems[0]?.label ?? quickPick.value;
+    const selected = quickPick.selectedItems[0]?.label;
+    const value = quickPick.value;
+    if (selected === undefined) resolve(value);
+
+    const selectedStartsWithValue = selected.slice(0, value.length) === value;
+    const finalValue = selectedStartsWithValue ? selected : value;
     quickPick.hide();
-    resolve(selected);
+    resolve(finalValue);
   };
 };
 

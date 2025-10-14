@@ -7,17 +7,17 @@ type Props = {
 
 export class UndoableEdit {
   constructor(public props: Props) {}
-  rename = async (startPath: string, endPath: string) => {
+  renameFile = async (startPath: string, endPath: string) => {
     const startUri = makeUri(startPath);
     const endUri = makeUri(endPath);
     this.props.editor.renameFile(startUri, endUri);
-    await this.applyEdit();
+    // await this.applyEdit();
   };
 
   createFile = async (filePath: string) => {
     const uri = makeUri(filePath);
     this.props.editor.createFile(uri);
-    await this.applyEdit();
+    // await this.applyEdit();
   };
 
   rewrite = async (filePath: string, newContent: string) => {
@@ -27,7 +27,7 @@ export class UndoableEdit {
     const lastLine = document.lineAt(document.lineCount - 1);
     const fullRange = new vscode.Range(firstLine.range.start, lastLine.range.end);
     this.props.editor.replace(document.uri, fullRange, newContent);
-    await this.applyEdit();
+    // await this.applyEdit();
   };
 
   writeFile = async (filePath: string, newContent: string) => {
@@ -38,7 +38,7 @@ export class UndoableEdit {
   deleteFile = async (filePath: string) => {
     const fileUri = makeUri(filePath);
     this.props.editor.deleteFile(fileUri);
-    await this.applyEdit();
+    // await this.applyEdit();
   };
 
   applyEdit = async () => {

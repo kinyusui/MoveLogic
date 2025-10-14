@@ -2,7 +2,7 @@ import { configMyStatusBar, MyStatusBar } from "../Extension/MyStatusBar";
 import { fs, path } from "../MakeDependencyEasy";
 import { configMakeNewPath, getFullPaths, MakeNewPath } from "../makePath";
 import { configRemoveEmtpyDir, RemoveEmptyDir } from "../RemoveEmptyDir";
-import { rootUndoableEdit, UndoableEdit } from "../WorkspaceFs/UndoableEdit";
+import { configUndoableEdit, UndoableEdit } from "../WorkspaceFs/UndoableEdit";
 import { updateImports, UpdateImports } from "./UpdateImports/UpdateImports";
 
 const makePathPossible = (filePath: string) => {
@@ -41,10 +41,8 @@ export class MoveLogic {
 
     // await fs.promises.rename(moveTargetPath, endFilePath);
     // await MyFs.rename(moveTargetPath, endFilePath);
-    await undoableEdit.rename(moveTargetPath, endFilePath);
-    // await undoableEdit.createFile(endFilePath);
-    await updateImports(moveTargetPath, endFilePath);
-    // await undoableEdit.delete(moveTargetPath);
+    await undoableEdit.renameFile(moveTargetPath, endFilePath);
+    // await updateImports(moveTargetPath, endFilePath);
 
     statusBar.updateProgress();
   };
@@ -63,11 +61,13 @@ export class MoveLogic {
   withStatusBar = async <TArg>([task, taskArg]: Command<TArg>) => {
     const { statusBar } = this.props;
     try {
+      this.props.undoableEdit = configUndoableEdit();
       const workLength = Array.isArray(taskArg) ? taskArg.length : 1;
       statusBar.start(workLength);
       await task(...taskArg);
     } finally {
       statusBar.end();
+      await this.props.undoableEdit.applyEdit();
     }
   };
 
@@ -91,9 +91,10 @@ const configMakeMoveMessage = (total: number) => {
 type Config = {
   oldDirPath: string;
   newDirPath: string;
+  undoableEdit: UndoableEdit;
 };
-export const configMoveLogic = ({ oldDirPath, newDirPath }: Config) => {
-  const undoableEdit = rootUndoableEdit; //configUndoableEdit();
+export const configMoveLogic = ({ oldDirPath, newDirPath, undoableEdit }: Config) => {
+  // const undoableEdit = rootUndoableEdit; //configUndoableEdit();
   const removeDirer = configRemoveEmtpyDir({ undoableEdit });
   const makeNewPath = configMakeNewPath(oldDirPath, newDirPath);
   const statusBar = configMyStatusBar({ configMessageMaker: configMakeMoveMessage });

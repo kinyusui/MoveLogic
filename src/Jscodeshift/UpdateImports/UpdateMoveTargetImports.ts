@@ -27,8 +27,8 @@ export class UpdateMoveTargetImports {
 
   updateImports = async () => {
     const { updateImport } = this;
-    const { importPather, newPath, undoableEdit } = this.props;
-    const { root } = updatePathUsingUpdater(newPath, updateImport, importPather);
+    const { importPather, newPath, undoableEdit, moveTargetPath } = this.props;
+    const { root } = updatePathUsingUpdater(moveTargetPath, updateImport, importPather);
     // fs.writeFileSync(newPath, root.toSource());
     rootLoggerHandler.logDebugMessage(newPath);
     await undoableEdit.rewrite(newPath, root.toSource());
