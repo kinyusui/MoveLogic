@@ -1,6 +1,6 @@
 import { rootLoggerHandler } from "../../Extension/Logger";
 import { configImportPather, ImportPather } from "../../WorkspaceFs/ImportPather";
-import { rootUndoableEdit, UndoableEdit } from "../../WorkspaceFs/UndoableEdit";
+import { UndoableEdit } from "../../WorkspaceFs/UndoableEdit";
 import { ASTImportPath } from "./Helpers";
 import { updatePathUsingUpdater } from "./UpdateNonMoveTargetImport";
 
@@ -37,9 +37,9 @@ export class UpdateMoveTargetImports {
 
 export const configUpdateMoveTargetImports = (
   moveTargetPath: string,
-  newPath: string
+  newPath: string,
+  undoableEdit: UndoableEdit
 ) => {
-  const undoableEdit = rootUndoableEdit; //configUndoableEdit();
   const importPather = configImportPather();
   return new UpdateMoveTargetImports({
     moveTargetPath,

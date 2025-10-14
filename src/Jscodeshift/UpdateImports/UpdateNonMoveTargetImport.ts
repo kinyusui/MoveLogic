@@ -1,5 +1,5 @@
 import { configImportPather, ImportPather } from "../../WorkspaceFs/ImportPather";
-import { rootUndoableEdit } from "../../WorkspaceFs/UndoableEdit";
+import { UndoableEdit } from "../../WorkspaceFs/UndoableEdit";
 import { removeExtension } from "../removeExtension";
 import {
   ASTImportPath,
@@ -28,7 +28,8 @@ export class UpdateNonMoveTargetImport {
   constructor(
     public moveTargetPath: PathWithNoExtension,
     public newPath: PathWithNoExtension,
-    public importPather: ImportPather
+    public importPather: ImportPather,
+    public undoableEdit: UndoableEdit
   ) {
     this.updateOccurred = false;
   }
@@ -54,15 +55,21 @@ export class UpdateNonMoveTargetImport {
   updateFile = async (filePath: string) => {
     const { updateImport, importPather } = this;
     const { root } = updatePathUsingUpdater(filePath, updateImport, importPather);
-    if (this.updateOccurred) await rootUndoableEdit.rewrite(filePath, root.toSource()); //fs.writeFileSync(filePath, root.toSource());
+    if (this.updateOccurred) await this.undoableEdit.rewrite(filePath, root.toSource()); //fs.writeFileSync(filePath, root.toSource());
   };
 }
 
 export const configUpdateNonMoveTargetImport = (
   moveTargetPath: PathWithNoExtension,
-  newPath: PathWithNoExtension
+  newPath: PathWithNoExtension,
+  undoableEdit: UndoableEdit
 ) => {
   [moveTargetPath, newPath] = [moveTargetPath, newPath].map(removeExtension);
   const importPather = configImportPather();
-  return new UpdateNonMoveTargetImport(moveTargetPath, newPath, importPather);
+  return new UpdateNonMoveTargetImport(
+    moveTargetPath,
+    newPath,
+    importPather,
+    undoableEdit
+  );
 };

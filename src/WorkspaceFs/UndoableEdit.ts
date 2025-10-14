@@ -53,4 +53,4 @@ export const configUndoableEdit = () => {
   });
 };
 
-export const rootUndoableEdit = configUndoableEdit();
+// export const rootUndoableEdit = configUndoableEdit();

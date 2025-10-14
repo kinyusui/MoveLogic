@@ -1,6 +1,6 @@
 import * as fs from "fs-extra";
 import path from "path";
-import { rootUndoableEdit, UndoableEdit } from "./WorkspaceFs/UndoableEdit";
+import { UndoableEdit } from "./WorkspaceFs/UndoableEdit";
 
 type Props = {
   undoableEdit: UndoableEdit;
@@ -50,8 +50,8 @@ type Config = {
   undoableEdit: UndoableEdit;
 };
 
-export const configRemoveEmtpyDir = (config: Config | undefined = undefined) => {
+export const configRemoveEmtpyDir = (config: Config) => {
   return new RemoveEmptyDir({
-    undoableEdit: rootUndoableEdit,
+    undoableEdit: config.undoableEdit,
   });
 };
