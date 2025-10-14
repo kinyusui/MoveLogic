@@ -1,5 +1,5 @@
 import fg from "fast-glob";
-import { configWorkspaceFs, WorkspaceFs } from "../../WorkspaceFs/WorkspaceFs";
+import { configWorkspaceFs, WorkspaceFs } from "../../vscodeFunctions/WorkspaceFs";
 
 type MatchSettings = {
   ignore: string[];

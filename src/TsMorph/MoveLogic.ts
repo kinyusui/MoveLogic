@@ -3,10 +3,10 @@ import * as fs from "fs-extra";
 import { Project, SourceFile } from "ts-morph";
 import * as vscode from "vscode";
 import { rootLoggerHandler } from "../Extension/Logger";
-import { LoggerHandler } from "../Logger";
-import { baseMakeNewPath, Posixify, posixify } from "../makePath";
-import { configRemoveEmtpyDir, RemoveEmptyDir } from "../RemoveEmptyDir";
-import { configUndoableEdit } from "../WorkspaceFs/UndoableEdit";
+import { configRemoveEmtpyDir, RemoveEmptyDir } from "../Extension/RemoveEmptyDir";
+import { LoggerHandler } from "../Nonvscode/Logger";
+import { baseMakeNewPath, Posixify, posixify } from "../Nonvscode/makePath";
+import { configUndoableEdit } from "../vscodeFunctions/UndoableEdit";
 import { makeProject } from "./Project";
 
 export const moveFile = (file: SourceFile, oldDirPath: string, newDirPath: string) => {

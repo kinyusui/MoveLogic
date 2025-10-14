@@ -1,6 +1,6 @@
 import { rootLoggerHandler } from "../../Extension/Logger";
-import { configImportPather, ImportPather } from "../../WorkspaceFs/ImportPather";
-import { UndoableEdit } from "../../WorkspaceFs/UndoableEdit";
+import { configImportPather, ImportPather } from "../../vscodeFunctions/ImportPather";
+import { UndoableEdit } from "../../vscodeFunctions/UndoableEdit";
 import { ASTImportPath } from "./Helpers";
 import { updatePathUsingUpdater } from "./UpdateNonMoveTargetImport";
 

@@ -1,4 +1,4 @@
-import { vscode } from "../MakeDependencyEasy";
+import { vscode } from "../Nonvscode/MakeDependencyEasy";
 import { makeUri } from "./MyFS";
 
 type Props = {

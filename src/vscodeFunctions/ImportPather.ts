@@ -1,5 +1,5 @@
 import * as path from "path";
-import { Posixify, posixify } from "./../makePath";
+import { Posixify, posixify } from "../Nonvscode/makePath";
 import { configWorkspaceFs, WorkspaceFs } from "./WorkspaceFs";
 
 export const shortAndPosixify = (filePath: string) => {

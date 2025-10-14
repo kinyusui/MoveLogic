@@ -2,7 +2,7 @@ import * as fs from "fs-extra";
 import * as path from "path";
 import type { Uri } from "vscode";
 import { configMoveLogic } from "../Jscodeshift/MoveLogic";
-import { configUndoableEdit, UndoableEdit } from "../WorkspaceFs/UndoableEdit";
+import { configUndoableEdit, UndoableEdit } from "../vscodeFunctions/UndoableEdit";
 import { SystemControl } from "./SystemTypes";
 
 type ContextBad = { isDir: boolean; fileDirPath: undefined; noWork: true };

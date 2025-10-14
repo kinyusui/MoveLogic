@@ -1,6 +1,6 @@
 import * as fs from "fs-extra";
 import path from "path";
-import { UndoableEdit } from "./WorkspaceFs/UndoableEdit";
+import { UndoableEdit } from "../vscodeFunctions/UndoableEdit";
 
 type Props = {
   undoableEdit: UndoableEdit;

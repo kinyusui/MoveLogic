@@ -1,8 +1,8 @@
 import { configMyStatusBar, MyStatusBar } from "../Extension/MyStatusBar";
-import { fs, path } from "../MakeDependencyEasy";
-import { configMakeNewPath, getFullPaths, MakeNewPath } from "../makePath";
-import { configRemoveEmtpyDir, RemoveEmptyDir } from "../RemoveEmptyDir";
-import { configUndoableEdit, UndoableEdit } from "../WorkspaceFs/UndoableEdit";
+import { configRemoveEmtpyDir, RemoveEmptyDir } from "../Extension/RemoveEmptyDir";
+import { fs, path } from "../Nonvscode/MakeDependencyEasy";
+import { configMakeNewPath, getFullPaths, MakeNewPath } from "../Nonvscode/makePath";
+import { configUndoableEdit, UndoableEdit } from "../vscodeFunctions/UndoableEdit";
 import { updateImports, UpdateImports } from "./UpdateImports/UpdateImports";
 
 const makePathPossible = (filePath: string) => {

@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { LoggerHandler } from "../Logger";
+import { LoggerHandler } from "../Nonvscode/Logger";
 import { configExtension } from "./Extension";
 import { rootLoggerHandler } from "./Logger";
 
