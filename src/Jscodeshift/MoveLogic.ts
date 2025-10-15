@@ -1,8 +1,9 @@
+import { rootLoggerHandler } from "../Extension/Logger";
 import { configMyStatusBar, MyStatusBar } from "../Extension/MyStatusBar";
 import { configRemoveEmtpyDir, RemoveEmptyDir } from "../Extension/RemoveEmptyDir";
 import { fs, path } from "../Nonvscode/MakeDependencyEasy";
 import { configMakeNewPath, getFullPaths, MakeNewPath } from "../Nonvscode/makePath";
-import { configUndoableEdit, UndoableEdit } from "../vscodeFunctions/UndoableEdit";
+import { UndoableEdit } from "../vscodeFunctions/UndoableEdit";
 import { updateImports, UpdateImports } from "./UpdateImports/UpdateImports";
 
 const makePathPossible = (filePath: string) => {
@@ -38,10 +39,11 @@ export class MoveLogic {
     const moveTargetPath: string = path.normalize(sourceFile);
     const endFilePath = makeNewPath(sourceFile);
     makePathPossible(endFilePath);
-
+    rootLoggerHandler.logDebugMessage(`made path for ${endFilePath}`);
     // await fs.promises.rename(moveTargetPath, endFilePath);
     // await MyFs.rename(moveTargetPath, endFilePath);
     await undoableEdit.renameFile(moveTargetPath, endFilePath);
+
     // await updateImports(moveTargetPath, endFilePath);
 
     statusBar.updateProgress();
@@ -61,13 +63,13 @@ export class MoveLogic {
   withStatusBar = async <TArg>([task, taskArg]: Command<TArg>) => {
     const { statusBar } = this.props;
     try {
-      this.props.undoableEdit = configUndoableEdit();
       const workLength = Array.isArray(taskArg) ? taskArg.length : 1;
       statusBar.start(workLength);
       await task(...taskArg);
+    } catch (err: any) {
+      rootLoggerHandler.logDebugMessage(err);
     } finally {
       statusBar.end();
-      await this.props.undoableEdit.applyEdit();
     }
   };
 

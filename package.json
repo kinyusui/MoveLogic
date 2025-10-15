@@ -1,6 +1,5 @@
 {
   "name": "ts-move-helper",
-  "type": "module",
   "displayName": "TS Move Helper",
   "publisher": "kinyusui",
   "description": "Move many TS files",

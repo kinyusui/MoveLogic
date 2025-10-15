@@ -3,7 +3,7 @@ import * as path from "path";
 import type { Uri } from "vscode";
 import { configMoveLogic } from "../Jscodeshift/MoveLogic";
 import { configUndoableEdit, UndoableEdit } from "../vscodeFunctions/UndoableEdit";
-import { SystemControl } from "./SystemTypes";
+import { SystemControl } from "./SystemTypes.type";
 
 type ContextBad = { isDir: boolean; fileDirPath: undefined; noWork: true };
 type Context = { isDir: boolean; fileDirPath: string; noWork: boolean };
@@ -63,8 +63,9 @@ export class HandleMove {
   };
 
   handleMove = async (uri: Uri, selectedUris: Uri[]) => {
-    const { myQuickPick, loggerHandler } = this.props;
+    const { myQuickPick, loggerHandler, undoableEdit } = this.props;
     try {
+      this.props.undoableEdit = configUndoableEdit();
       myQuickPick.show();
       const parentDir = path.dirname(uri.fsPath);
       const inputDirPath = await myQuickPick.getInput(parentDir);
@@ -76,6 +77,8 @@ export class HandleMove {
       loggerHandler.logDebugMessage(`Error: ${err}`);
     } finally {
       myQuickPick.hide(); // Guaranteed inside finally.
+      await this.props.undoableEdit.applyEdit();
+      loggerHandler.logDebugMessage("Done");
     }
   };
 }

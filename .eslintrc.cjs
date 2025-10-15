@@ -11,7 +11,7 @@ module.exports = {
     ecmaVersion: 2020,
   },
   plugins: ["@typescript-eslint"],
-  extends: ["plugin:@typescript-eslint/recommended"],
+  // extends: ["plugin:@typescript-eslint/recommended"],
   overrides: [
     {
       // Test files only

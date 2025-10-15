@@ -7,14 +7,14 @@ type Props = {
 
 export class UndoableEdit {
   constructor(public props: Props) {}
-  renameFile = async (startPath: string, endPath: string) => {
+  renameFile = (startPath: string, endPath: string) => {
     const startUri = makeUri(startPath);
     const endUri = makeUri(endPath);
     this.props.editor.renameFile(startUri, endUri);
     // await this.applyEdit();
   };
 
-  createFile = async (filePath: string) => {
+  createFile = (filePath: string) => {
     const uri = makeUri(filePath);
     this.props.editor.createFile(uri);
     // await this.applyEdit();
@@ -35,7 +35,7 @@ export class UndoableEdit {
     await this.rewrite(filePath, newContent);
   };
 
-  deleteFile = async (filePath: string) => {
+  deleteFile = (filePath: string) => {
     const fileUri = makeUri(filePath);
     this.props.editor.deleteFile(fileUri);
     // await this.applyEdit();
