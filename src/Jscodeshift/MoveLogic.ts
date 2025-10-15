@@ -1,20 +1,11 @@
+import { MakePathPossible, makePathPossible } from "src/vscodeFunctions/Editor/Edit";
 import { rootLoggerHandler } from "../Extension/Logger";
 import { configMyStatusBar, MyStatusBar } from "../Extension/MyStatusBar";
 import { configRemoveEmtpyDir, RemoveEmptyDir } from "../Extension/RemoveEmptyDir";
-import { fs, path } from "../Nonvscode/MakeDependencyEasy";
+import { path } from "../Nonvscode/MakeDependencyEasy";
 import { configMakeNewPath, getFullPaths, MakeNewPath } from "../Nonvscode/makePath";
-import { UndoableEdit } from "../vscodeFunctions/UndoableEdit";
+import { UndoableEdit } from "../vscodeFunctions/Editor/UndoableEdit";
 import { updateImports, UpdateImports } from "./UpdateImports/UpdateImports";
-
-const makePathPossible = (filePath: string) => {
-  const dirPath = path.dirname(filePath);
-  const dirMissing = !fs.existsSync(dirPath);
-  if (dirMissing) {
-    makePathPossible(dirPath);
-    fs.mkdirSync(dirPath);
-  }
-};
-type MakePathPossible = typeof makePathPossible;
 
 type Props = {
   oldDirPath: string;
@@ -78,7 +69,7 @@ export class MoveLogic {
     const filePaths = getFullPaths(oldDirPath);
     const task: Command<string[]> = [this._moveDir, [filePaths]];
     await this.withStatusBar(task);
-    await removeDirer.removeEmptyDir(oldDirPath);
+    // await removeDirer.removeEmptyDir(oldDirPath);
   };
 }
 

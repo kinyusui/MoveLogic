@@ -2,7 +2,6 @@ module.exports = {
   ignorePatterns: [".eslintrc.cjs", ".eslintrc.js"], // Exclude config files
   rules: {
     "prefer-const": "off",
-    "require-await": "error", // Don't use async without await
   },
   parser: "@typescript-eslint/parser",
   parserOptions: {

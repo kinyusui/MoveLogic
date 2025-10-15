@@ -1,4 +1,4 @@
-import { UndoableEdit } from "../../vscodeFunctions/UndoableEdit";
+import { UndoableEdit } from "../../vscodeFunctions/Editor/UndoableEdit";
 import { getProjectFiles } from "./GetFiles";
 import { configUpdateMoveTargetImports } from "./UpdateMoveTargetImports";
 import { configUpdateNonMoveTargetImport } from "./UpdateNonMoveTargetImport";
@@ -15,7 +15,7 @@ export const updateImports = async (
     newPath,
     undoableEdit
   );
-  await updateOwnImports.updateImports();
+  updateOwnImports.updateImports();
 
   const updateImports = configUpdateNonMoveTargetImport(
     moveTargetPath,
@@ -24,7 +24,7 @@ export const updateImports = async (
   );
   const workspaceFiles = await getProjectFiles();
   for (const workspaceFile of workspaceFiles) {
-    await updateImports.updateFile(workspaceFile);
+    updateImports.updateFile(workspaceFile);
   }
 };
 

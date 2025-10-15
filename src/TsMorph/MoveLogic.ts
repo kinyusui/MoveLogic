@@ -6,7 +6,7 @@ import { rootLoggerHandler } from "../Extension/Logger";
 import { configRemoveEmtpyDir, RemoveEmptyDir } from "../Extension/RemoveEmptyDir";
 import { LoggerHandler } from "../Nonvscode/Logger";
 import { baseMakeNewPath, Posixify, posixify } from "../Nonvscode/makePath";
-import { configUndoableEdit } from "../vscodeFunctions/UndoableEdit";
+import { configUndoableEdit } from "../vscodeFunctions/Editor/UndoableEdit";
 import { makeProject } from "./Project";
 
 export const moveFile = (file: SourceFile, oldDirPath: string, newDirPath: string) => {

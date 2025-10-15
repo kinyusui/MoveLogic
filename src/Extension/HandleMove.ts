@@ -2,14 +2,17 @@ import * as fs from "fs-extra";
 import * as path from "path";
 import type { Uri } from "vscode";
 import { configMoveLogic } from "../Jscodeshift/MoveLogic";
-import { configUndoableEdit, UndoableEdit } from "../vscodeFunctions/UndoableEdit";
+import {
+  configUndoableEdit,
+  UndoableEdit,
+} from "../vscodeFunctions/Editor/UndoableEdit";
 import { SystemControl } from "./SystemTypes.type";
 
 type ContextBad = { isDir: boolean; fileDirPath: undefined; noWork: true };
 type Context = { isDir: boolean; fileDirPath: string; noWork: boolean };
 
 type Props = SystemControl & {
-  undoableEdit: UndoableEdit;
+  editor: UndoableEdit;
 };
 
 export class HandleMove {
@@ -42,7 +45,7 @@ export class HandleMove {
     const moveLogic = configMoveLogic({
       oldDirPath: oldDirPath,
       newDirPath: fileDirPath,
-      undoableEdit: this.props.undoableEdit,
+      undoableEdit: this.props.editor,
     });
     const { moveDir, moveFile } = moveLogic;
     isDir ? await moveDir() : await moveFile(sourcePath);
@@ -63,9 +66,9 @@ export class HandleMove {
   };
 
   handleMove = async (uri: Uri, selectedUris: Uri[]) => {
-    const { myQuickPick, loggerHandler, undoableEdit } = this.props;
+    const { myQuickPick, loggerHandler, editor } = this.props;
     try {
-      this.props.undoableEdit = configUndoableEdit();
+      this.props.editor = configUndoableEdit();
       myQuickPick.show();
       const parentDir = path.dirname(uri.fsPath);
       const inputDirPath = await myQuickPick.getInput(parentDir);
@@ -77,7 +80,7 @@ export class HandleMove {
       loggerHandler.logDebugMessage(`Error: ${err}`);
     } finally {
       myQuickPick.hide(); // Guaranteed inside finally.
-      await this.props.undoableEdit.applyEdit();
+      await this.props.editor.applyEdit();
       loggerHandler.logDebugMessage("Done");
     }
   };
@@ -87,6 +90,6 @@ export const configHandleMove = (systemControl: SystemControl) => {
   const undoableEdit = configUndoableEdit();
   return new HandleMove({
     ...systemControl,
-    undoableEdit: undoableEdit,
+    editor: undoableEdit,
   });
 };

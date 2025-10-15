@@ -1,5 +1,6 @@
+import { fs } from "../../Nonvscode/MakeDependencyEasy";
+import { UndoableEdit } from "../../vscodeFunctions/Editor/UndoableEdit";
 import { configImportPather, ImportPather } from "../../vscodeFunctions/ImportPather";
-import { UndoableEdit } from "../../vscodeFunctions/UndoableEdit";
 import { removeExtension } from "../removeExtension";
 import {
   ASTImportPath,
@@ -52,10 +53,10 @@ export class UpdateNonMoveTargetImport {
     }
   };
 
-  updateFile = async (filePath: string) => {
+  updateFile = (filePath: string) => {
     const { updateImport, importPather } = this;
     const { root } = updatePathUsingUpdater(filePath, updateImport, importPather);
-    if (this.updateOccurred) await this.undoableEdit.rewrite(filePath, root.toSource()); //fs.writeFileSync(filePath, root.toSource());
+    if (this.updateOccurred) fs.writeFileSync(filePath, root.toSource());
   };
 }
 
