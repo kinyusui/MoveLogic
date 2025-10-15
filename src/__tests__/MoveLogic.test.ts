@@ -1,10 +1,10 @@
-import * as fs from "fs-extra";
+import fs from "fs-extra";
 import { describe, expect } from "vitest";
 import { Uri } from "vscode";
-import { vscode } from "../MakeDependencyEasy";
-import { configMakeAbsolute, getFullPaths } from "../makePath";
+import { vscode } from "../Nonvscode/MakeDependencyEasy";
+import { configMakeAbsolute, getFullPaths } from "../Nonvscode/makePath";
 import { configMoveLogic } from "../TsMorph/MoveLogic";
-import { getWorkspaceRoot } from "./../WorkspaceFs/WorkspaceFs";
+import { getWorkspaceRoot } from "../vscodeFunctions/WorkspaceFs";
 
 const makeTestMoveLogic = () => {
   // const project = makeTestProject();

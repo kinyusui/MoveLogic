@@ -12,8 +12,9 @@
     "sourceMap": true,
     "inlineSources": true,
     "allowJs": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "skipLibCheck": true // Skip type checking of declaration files
   },
   "include": ["./src"],
-  "exclude": ["./src/**/*.test.ts"]
+  "exclude": ["node_modules", "**/node_modules/*"]
 }
