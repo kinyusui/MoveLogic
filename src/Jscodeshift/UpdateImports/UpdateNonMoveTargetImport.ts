@@ -1,5 +1,4 @@
 import { fs } from "../../Nonvscode/MakeDependencyEasy";
-import { UndoableEdit } from "../../vscodeFunctions/Editor/UndoableEdit";
 import { configImportPather, ImportPather } from "../../vscodeFunctions/ImportPather";
 import { removeExtension } from "../removeExtension";
 import {
@@ -29,8 +28,7 @@ export class UpdateNonMoveTargetImport {
   constructor(
     public moveTargetPath: PathWithNoExtension,
     public newPath: PathWithNoExtension,
-    public importPather: ImportPather,
-    public undoableEdit: UndoableEdit
+    public importPather: ImportPather
   ) {
     this.updateOccurred = false;
   }
@@ -62,15 +60,9 @@ export class UpdateNonMoveTargetImport {
 
 export const configUpdateNonMoveTargetImport = (
   moveTargetPath: PathWithNoExtension,
-  newPath: PathWithNoExtension,
-  undoableEdit: UndoableEdit
+  newPath: PathWithNoExtension
 ) => {
   [moveTargetPath, newPath] = [moveTargetPath, newPath].map(removeExtension);
   const importPather = configImportPather();
-  return new UpdateNonMoveTargetImport(
-    moveTargetPath,
-    newPath,
-    importPather,
-    undoableEdit
-  );
+  return new UpdateNonMoveTargetImport(moveTargetPath, newPath, importPather);
 };

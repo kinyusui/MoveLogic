@@ -1,27 +1,14 @@
-import { UndoableEdit } from "../../vscodeFunctions/Editor/UndoableEdit";
 import { getProjectFiles } from "./GetFiles";
 import { configUpdateMoveTargetImports } from "./UpdateMoveTargetImports";
 import { configUpdateNonMoveTargetImport } from "./UpdateNonMoveTargetImport";
 
-export const updateImports = async (
-  moveTargetPath: string,
-  newPath: string,
-  undoableEdit: UndoableEdit
-) => {
+export const updateImports = async (moveTargetPath: string, newPath: string) => {
   // const outerLogicFound = allFiles.filter((path) => path.includes("OuterLogic"));
   // Update imports in all files
-  const updateOwnImports = configUpdateMoveTargetImports(
-    moveTargetPath,
-    newPath,
-    undoableEdit
-  );
+  const updateOwnImports = configUpdateMoveTargetImports(moveTargetPath, newPath);
   updateOwnImports.updateImports();
 
-  const updateImports = configUpdateNonMoveTargetImport(
-    moveTargetPath,
-    newPath,
-    undoableEdit
-  );
+  const updateImports = configUpdateNonMoveTargetImport(moveTargetPath, newPath);
   const workspaceFiles = await getProjectFiles();
   for (const workspaceFile of workspaceFiles) {
     updateImports.updateFile(workspaceFile);

@@ -4,17 +4,15 @@ import { configMyStatusBar, MyStatusBar } from "../Extension/MyStatusBar";
 import { configRemoveEmtpyDir, RemoveEmptyDir } from "../Extension/RemoveEmptyDir";
 import { path } from "../Nonvscode/MakeDependencyEasy";
 import { configMakeNewPath, getFullPaths, MakeNewPath } from "../Nonvscode/makePath";
-import { UndoableEdit } from "../vscodeFunctions/Editor/UndoableEdit";
-import { updateImports, UpdateImports } from "./UpdateImports/UpdateImports";
+import { EditorFunctions } from "../vscodeFunctions/Editor/UndoableEdit";
 
 type Props = {
   oldDirPath: string;
   makeNewPath: MakeNewPath;
   removeDirer: RemoveEmptyDir;
-  updateImports: UpdateImports;
   statusBar: MyStatusBar;
   makePathPossible: MakePathPossible;
-  undoableEdit: UndoableEdit;
+  undoableEdit: EditorFunctions;
 };
 
 type Args<TArg> = TArg[];
@@ -25,7 +23,7 @@ export class MoveLogic {
   constructor(public props: Props) {}
   _moveFile = async (sourceFile: string) => {
     // Normalize paths
-    const { makeNewPath, updateImports, makePathPossible, statusBar } = this.props;
+    const { makeNewPath, makePathPossible, statusBar } = this.props;
     const { undoableEdit } = this.props;
     const moveTargetPath: string = path.normalize(sourceFile);
     const endFilePath = makeNewPath(sourceFile);
@@ -73,7 +71,7 @@ export class MoveLogic {
   };
 }
 
-const configMakeMoveMessage = (total: number) => {
+export const configMakeMoveMessage = (total: number) => {
   return (progress: number) => {
     const percent = 100 * (progress / total);
     const shortPercent = percent.toFixed(3);
@@ -81,10 +79,10 @@ const configMakeMoveMessage = (total: number) => {
   };
 };
 
-type Config = {
+export type Config = {
   oldDirPath: string;
   newDirPath: string;
-  undoableEdit: UndoableEdit;
+  undoableEdit: EditorFunctions;
 };
 export const configMoveLogic = ({ oldDirPath, newDirPath, undoableEdit }: Config) => {
   // const undoableEdit = rootUndoableEdit; //configUndoableEdit();
@@ -96,7 +94,6 @@ export const configMoveLogic = ({ oldDirPath, newDirPath, undoableEdit }: Config
     oldDirPath,
     makeNewPath,
     removeDirer: removeDirer,
-    updateImports,
     statusBar,
     makePathPossible: makePathPossible,
     undoableEdit: undoableEdit,

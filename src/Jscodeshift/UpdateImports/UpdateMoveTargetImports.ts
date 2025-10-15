@@ -1,6 +1,5 @@
 import { rootLoggerHandler } from "../../Extension/Logger";
 import { fs } from "../../Nonvscode/MakeDependencyEasy";
-import { UndoableEdit } from "../../vscodeFunctions/Editor/UndoableEdit";
 import { configImportPather, ImportPather } from "../../vscodeFunctions/ImportPather";
 import { ASTImportPath } from "./Helpers";
 import { updatePathUsingUpdater } from "./UpdateNonMoveTargetImport";
@@ -9,7 +8,6 @@ type Props = {
   moveTargetPath: string;
   newPath: string;
   importPather: ImportPather;
-  undoableEdit: UndoableEdit;
 };
 
 export class UpdateMoveTargetImports {
@@ -28,7 +26,7 @@ export class UpdateMoveTargetImports {
 
   updateImports = () => {
     const { updateImport } = this;
-    const { importPather, newPath, undoableEdit, moveTargetPath } = this.props;
+    const { importPather, newPath, moveTargetPath } = this.props;
     const { root } = updatePathUsingUpdater(moveTargetPath, updateImport, importPather);
     fs.writeFileSync(newPath, root.toSource());
     rootLoggerHandler.logDebugMessage(newPath);
@@ -38,14 +36,12 @@ export class UpdateMoveTargetImports {
 
 export const configUpdateMoveTargetImports = (
   moveTargetPath: string,
-  newPath: string,
-  undoableEdit: UndoableEdit
+  newPath: string
 ) => {
   const importPather = configImportPather();
   return new UpdateMoveTargetImports({
     moveTargetPath,
     newPath,
     importPather,
-    undoableEdit,
   });
 };

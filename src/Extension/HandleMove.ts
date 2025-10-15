@@ -2,17 +2,15 @@ import * as fs from "fs-extra";
 import * as path from "path";
 import type { Uri } from "vscode";
 import { configMoveLogic } from "../Jscodeshift/MoveLogic";
-import {
-  configUndoableEdit,
-  UndoableEdit,
-} from "../vscodeFunctions/Editor/UndoableEdit";
+import { EditorFunctions } from "../vscodeFunctions/Editor/UndoableEdit";
 import { SystemControl } from "./SystemTypes.type";
 
 type ContextBad = { isDir: boolean; fileDirPath: undefined; noWork: true };
 type Context = { isDir: boolean; fileDirPath: string; noWork: boolean };
 
 type Props = SystemControl & {
-  editor: UndoableEdit;
+  editor: EditorFunctions;
+  configEditor: () => EditorFunctions;
 };
 
 export class HandleMove {
@@ -66,9 +64,9 @@ export class HandleMove {
   };
 
   handleMove = async (uri: Uri, selectedUris: Uri[]) => {
-    const { myQuickPick, loggerHandler, editor } = this.props;
+    const { myQuickPick, loggerHandler, editor, configEditor } = this.props;
     try {
-      this.props.editor = configUndoableEdit();
+      this.props.editor = configEditor();
       myQuickPick.show();
       const parentDir = path.dirname(uri.fsPath);
       const inputDirPath = await myQuickPick.getInput(parentDir);
@@ -85,11 +83,3 @@ export class HandleMove {
     }
   };
 }
-
-export const configHandleMove = (systemControl: SystemControl) => {
-  const undoableEdit = configUndoableEdit();
-  return new HandleMove({
-    ...systemControl,
-    editor: undoableEdit,
-  });
-};

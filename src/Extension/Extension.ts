@@ -1,9 +1,10 @@
 import * as vscode from "vscode";
 // import { configMoveLogic } from "../Jscodeshift/MoveLogic";
 import { configMyQuickPick } from "../Nonvscode/Input";
-import { configHandleMove, HandleMove } from "./HandleMove";
+import { HandleMove } from "./HandleMove";
 import { configHandleUseSuggest, HandleUseSuggest } from "./HandleUseSuggest";
 import { rootLoggerHandler } from "./Logger";
+import { configHandleMove } from "./NoUndoButStable/HandleMove";
 import { SystemControl } from "./SystemTypes.type";
 
 type CommandInfo = [string, (...args: any[]) => any];

@@ -1,9 +1,9 @@
 import * as fs from "fs-extra";
 import path from "path";
-import { UndoableEdit } from "../vscodeFunctions/Editor/UndoableEdit";
+import { EditorFunctions } from "../vscodeFunctions/Editor/UndoableEdit";
 
 type Props = {
-  undoableEdit: UndoableEdit;
+  undoableEdit: EditorFunctions;
 };
 
 export class RemoveEmptyDir {
@@ -47,7 +47,7 @@ export class RemoveEmptyDir {
 }
 
 type Config = {
-  undoableEdit: UndoableEdit;
+  undoableEdit: EditorFunctions;
 };
 
 export const configRemoveEmtpyDir = (config: Config) => {
