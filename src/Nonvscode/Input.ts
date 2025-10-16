@@ -1,8 +1,8 @@
 import * as fs from "fs-extra";
 import * as path from "path";
 import * as vscode from "vscode";
-import { QuickPickElement } from "../Extension/SystemTypes.type";
-import { posixify } from "./makePath";
+import { QuickPickElement } from "../Extension/SystemTypes.type.js";
+import { posixify } from "./makePath.js";
 
 const makeFullPath = (dirPath: string, fileName: string) => {
   return path.join(dirPath, fileName);

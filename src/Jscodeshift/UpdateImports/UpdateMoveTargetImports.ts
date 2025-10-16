@@ -1,8 +1,11 @@
-import { rootLoggerHandler } from "../../Extension/Logger";
-import { fs } from "../../Nonvscode/MakeDependencyEasy";
-import { configImportPather, ImportPather } from "../../vscodeFunctions/ImportPather";
-import { ASTImportPath } from "./Helpers";
-import { updatePathUsingUpdater } from "./UpdateNonMoveTargetImport";
+import { rootLoggerHandler } from "../../Extension/Logger.js";
+import { fs } from "../../Nonvscode/MakeDependencyEasy.js";
+import {
+  configImportPather,
+  ImportPather,
+} from "../../vscodeFunctions/ImportPather.js";
+import { ASTImportPath } from "./Helpers.js";
+import { updatePathUsingUpdater } from "./UpdateNonMoveTargetImport.js";
 
 type Props = {
   moveTargetPath: string;

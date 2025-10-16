@@ -1,11 +1,6 @@
-import { vscode } from "../../Nonvscode/MakeDependencyEasy";
-import { makeUri } from "../MyFS";
-
-export interface EditorFunctions {
-  renameFile: (startPath: string, endPath: string) => Promise<void>;
-  deleteFile: (filePath: string) => Promise<void>;
-  applyEdit: () => Promise<void>;
-}
+import { vscode } from "../../Nonvscode/MakeDependencyEasy.js";
+import { makeUri } from "../MyFS.js";
+import { EditorFunctions } from "./EditorFunctions.type.js";
 
 type Props = {
   editor: vscode.WorkspaceEdit;

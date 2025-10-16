@@ -1,12 +1,15 @@
-import { fs } from "../../Nonvscode/MakeDependencyEasy";
-import { configImportPather, ImportPather } from "../../vscodeFunctions/ImportPather";
-import { removeExtension } from "../removeExtension";
+import { fs } from "../../Nonvscode/MakeDependencyEasy.js";
+import {
+  configImportPather,
+  ImportPather,
+} from "../../vscodeFunctions/ImportPather.js";
+import { removeExtension } from "../removeExtension.js";
 import {
   ASTImportPath,
   getFileInfo,
   isMoveTargetAnImport,
   PathWithNoExtension,
-} from "./Helpers";
+} from "./Helpers.js";
 
 type UpdateImport = (startDirPath: string, importPathInfo: ASTImportPath) => void;
 export const updatePathUsingUpdater = (

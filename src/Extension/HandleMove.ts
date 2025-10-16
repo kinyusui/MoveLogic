@@ -1,9 +1,9 @@
 import * as fs from "fs-extra";
 import * as path from "path";
 import type { Uri } from "vscode";
-import { configMoveLogic } from "../Jscodeshift/MoveLogic";
-import { EditorFunctions } from "../vscodeFunctions/Editor/UndoableEdit";
-import { SystemControl } from "./SystemTypes.type";
+import { configMoveLogic } from "../Jscodeshift/MoveLogic.js";
+import { EditorFunctions } from "../vscodeFunctions/Editor/EditorFunctions.type.js";
+import { SystemControl } from "./SystemTypes.type.js";
 
 type ContextBad = { isDir: boolean; fileDirPath: undefined; noWork: true };
 type Context = { isDir: boolean; fileDirPath: string; noWork: boolean };

@@ -1,11 +1,13 @@
 import * as vscode from "vscode";
 // import { configMoveLogic } from "../Jscodeshift/MoveLogic";
-import { configMyQuickPick } from "../Nonvscode/Input";
-import { HandleMove } from "./HandleMove";
-import { configHandleUseSuggest, HandleUseSuggest } from "./HandleUseSuggest";
-import { rootLoggerHandler } from "./Logger";
-import { configHandleMove } from "./NoUndoButStable/HandleMove";
-import { SystemControl } from "./SystemTypes.type";
+import { configMyQuickPick } from "../Nonvscode/Input.js";
+import { HandleMove } from "./HandleMove.js";
+import { configHandleUseSuggest, HandleUseSuggest } from "./HandleUseSuggest.js";
+import { rootLoggerHandler } from "./Logger.js";
+// import { configHandleMove } from "./NoUndoButStable/HandleMove";
+
+import { SystemControl } from "./SystemTypes.type.js";
+import { configHandleMove } from "./UndoableButBuggy/HandleMove.js";
 
 type CommandInfo = [string, (...args: any[]) => any];
 

@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import { ASTPath, ImportDeclaration, JSCodeshift } from "jscodeshift";
-import jscodeshift from "jscodeshift/src/core";
+import jscodeshift from "jscodeshift/src/core.js";
 import * as path from "path";
 
 export const isMoveTargetAnImport = (

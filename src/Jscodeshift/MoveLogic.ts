@@ -1,10 +1,10 @@
-import { MakePathPossible, makePathPossible } from "src/vscodeFunctions/Editor/Edit";
-import { rootLoggerHandler } from "../Extension/Logger";
-import { configMyStatusBar, MyStatusBar } from "../Extension/MyStatusBar";
-import { configRemoveEmtpyDir, RemoveEmptyDir } from "../Extension/RemoveEmptyDir";
-import { path } from "../Nonvscode/MakeDependencyEasy";
-import { configMakeNewPath, getFullPaths, MakeNewPath } from "../Nonvscode/makePath";
-import { EditorFunctions } from "../vscodeFunctions/Editor/UndoableEdit";
+import { rootLoggerHandler } from "../Extension/Logger.js";
+import { configMyStatusBar, MyStatusBar } from "../Extension/MyStatusBar.js";
+import { configRemoveEmtpyDir, RemoveEmptyDir } from "../Extension/RemoveEmptyDir.js";
+import { path } from "../Nonvscode/MakeDependencyEasy.js";
+import { configMakeNewPath, getFullPaths, MakeNewPath } from "../Nonvscode/makePath.js";
+import { makePathPossible, MakePathPossible } from "../vscodeFunctions/Editor/Edit.js";
+import { EditorFunctions } from "../vscodeFunctions/Editor/EditorFunctions.type.js";
 
 type Props = {
   oldDirPath: string;

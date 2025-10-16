@@ -1,6 +1,6 @@
-import { getProjectFiles } from "./GetFiles";
-import { configUpdateMoveTargetImports } from "./UpdateMoveTargetImports";
-import { configUpdateNonMoveTargetImport } from "./UpdateNonMoveTargetImport";
+import { getProjectFiles } from "./GetFiles.js";
+import { configUpdateMoveTargetImports } from "./UpdateMoveTargetImports.js";
+import { configUpdateNonMoveTargetImport } from "./UpdateNonMoveTargetImport.js";
 
 export const updateImports = async (moveTargetPath: string, newPath: string) => {
   // const outerLogicFound = allFiles.filter((path) => path.includes("OuterLogic"));

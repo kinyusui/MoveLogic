@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
-import { LoggerHandler } from "../Nonvscode/Logger";
-import { configExtension } from "./Extension";
-import { rootLoggerHandler } from "./Logger";
+import { LoggerHandler } from "../Nonvscode/Logger.js";
+import { configExtension } from "./Extension.js";
+import { rootLoggerHandler } from "./Logger.js";
 
 const configExtensionLogic = (logger: LoggerHandler) => {
   function activate(context: vscode.ExtensionContext) {

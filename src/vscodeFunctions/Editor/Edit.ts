@@ -3,9 +3,9 @@ import path from "path";
 import {
   updateImports,
   UpdateImports,
-} from "../../Jscodeshift/UpdateImports/UpdateImports";
-import { MyFs } from "../MyFS";
-import { EditorFunctions } from "./UndoableEdit";
+} from "../../Jscodeshift/UpdateImports/UpdateImports.js";
+import { MyFs } from "../MyFS.js";
+import { EditorFunctions } from "./EditorFunctions.type.js";
 
 export const makePathPossible = (filePath: string) => {
   const dirPath = path.dirname(filePath);
@@ -37,7 +37,7 @@ export class Editor implements EditorFunctions {
   applyEdit = async () => {};
 }
 
-export const configUndoableEdit = () => {
+export const configStableEdit = () => {
   return new Editor({
     updateImports: updateImports,
   });

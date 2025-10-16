@@ -1,6 +1,6 @@
 import { FileType, Uri } from "vscode";
-import { vscode } from "../Nonvscode/MakeDependencyEasy";
-import { vscodeFs } from "./MyFS";
+import { vscode } from "../Nonvscode/MakeDependencyEasy.js";
+import { vscodeFs } from "./MyFS.js";
 
 const makeFileTruth = async (uri: Uri, fileType: vscode.FileType) => {
   const stat = await vscodeFs.stat(uri);

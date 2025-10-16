@@ -1,7 +1,7 @@
 import callsites from "callsites";
 import * as fs from "fs-extra";
 import * as path from "path";
-import { fillDefaults } from "./Dict";
+import { fillDefaults } from "./Dict.js";
 
 export const getLastDir = (filePath: string) => {
   const pathParts = filePath.split(path.sep);
