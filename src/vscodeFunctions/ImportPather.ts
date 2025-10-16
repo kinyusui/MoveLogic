@@ -1,4 +1,4 @@
-import * as path from "path";
+import path from "path";
 import { Posixify, posixify } from "../Nonvscode/makePath.js";
 import { configWorkspaceFs, WorkspaceFs } from "./WorkspaceFs.js";
 

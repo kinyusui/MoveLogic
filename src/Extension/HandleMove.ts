@@ -1,5 +1,5 @@
-import * as fs from "fs-extra";
-import * as path from "path";
+import fs from "fs-extra";
+import path from "path";
 import type { Uri } from "vscode";
 import { configMoveLogic } from "../Jscodeshift/MoveLogic.js";
 import { EditorFunctions } from "../vscodeFunctions/Editor/EditorFunctions.type.js";
@@ -43,7 +43,7 @@ export class HandleMove {
     const moveLogic = configMoveLogic({
       oldDirPath: oldDirPath,
       newDirPath: fileDirPath,
-      undoableEdit: this.props.editor,
+      editor: this.props.editor,
     });
     const { moveDir, moveFile } = moveLogic;
     isDir ? await moveDir() : await moveFile(sourcePath);

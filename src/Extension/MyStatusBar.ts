@@ -1,4 +1,4 @@
-import * as vscode from "vscode";
+import vscode from "vscode";
 
 type ConfigMessageMaker = (total: number) => (progress: number) => string;
 type MessageMaker = ReturnType<ConfigMessageMaker>;

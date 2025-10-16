@@ -1,4 +1,4 @@
-import * as vscode from "vscode";
+import vscode from "vscode";
 // Create output channel
 type OutputChannel = ReturnType<(typeof vscode)["window"]["createOutputChannel"]>;
 type Logger = Pick<OutputChannel, "append" | "appendLine" | "show" | "dispose">;

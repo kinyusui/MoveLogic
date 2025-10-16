@@ -1,7 +1,7 @@
 import { Presets, SingleBar } from "cli-progress";
-import * as fs from "fs-extra";
+import fs from "fs-extra";
 import { Project, SourceFile } from "ts-morph";
-import * as vscode from "vscode";
+import vscode from "vscode";
 import { rootLoggerHandler } from "../Extension/Logger.js";
 import { configRemoveEmtpyDir, RemoveEmptyDir } from "../Extension/RemoveEmptyDir.js";
 import { LoggerHandler } from "../Nonvscode/Logger.js";
@@ -99,7 +99,7 @@ export const configMoveLogic = ({ uri, log = false }: ArgConfigMoveDir) => {
   const loggerHandler = rootLoggerHandler; //makeLoggerHandler(logChannelName);
   const bar = makeBar();
   const showProgress = makeShowProgress(log, bar);
-  const removeEmptyDir = configRemoveEmtpyDir({ undoableEdit: configUndoableEdit() });
+  const removeEmptyDir = configRemoveEmtpyDir({ editor: configUndoableEdit() });
   const moveDir = new MoveLogic({
     project,
     moveFile,

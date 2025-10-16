@@ -26,7 +26,7 @@ export class Editor implements EditorFunctions {
   constructor(public props: Props) {}
   renameFile = async (startPath: string, endPath: string) => {
     await MyFs.rename(startPath, endPath);
-    this.props.updateImports(startPath, endPath);
+    await this.props.updateImports(startPath, endPath);
     // await this.applyEdit();
   };
 

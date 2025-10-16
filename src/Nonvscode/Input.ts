@@ -1,6 +1,6 @@
-import * as fs from "fs-extra";
-import * as path from "path";
-import * as vscode from "vscode";
+import fs from "fs-extra";
+import path from "path";
+import vscode from "vscode";
 import { QuickPickElement } from "../Extension/SystemTypes.type.js";
 import { posixify } from "./makePath.js";
 

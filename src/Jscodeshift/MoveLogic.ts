@@ -12,7 +12,7 @@ type Props = {
   removeDirer: RemoveEmptyDir;
   statusBar: MyStatusBar;
   makePathPossible: MakePathPossible;
-  undoableEdit: EditorFunctions;
+  editor: EditorFunctions;
 };
 
 type Args<TArg> = TArg[];
@@ -24,14 +24,14 @@ export class MoveLogic {
   _moveFile = async (sourceFile: string) => {
     // Normalize paths
     const { makeNewPath, makePathPossible, statusBar } = this.props;
-    const { undoableEdit } = this.props;
+    const { editor } = this.props;
     const moveTargetPath: string = path.normalize(sourceFile);
     const endFilePath = makeNewPath(sourceFile);
     makePathPossible(endFilePath);
     rootLoggerHandler.logDebugMessage(`made path for ${endFilePath}`);
     // await fs.promises.rename(moveTargetPath, endFilePath);
     // await MyFs.rename(moveTargetPath, endFilePath);
-    await undoableEdit.renameFile(moveTargetPath, endFilePath);
+    await editor.renameFile(moveTargetPath, endFilePath);
 
     // await updateImports(moveTargetPath, endFilePath);
 
@@ -82,11 +82,11 @@ export const configMakeMoveMessage = (total: number) => {
 export type Config = {
   oldDirPath: string;
   newDirPath: string;
-  undoableEdit: EditorFunctions;
+  editor: EditorFunctions;
 };
-export const configMoveLogic = ({ oldDirPath, newDirPath, undoableEdit }: Config) => {
+export const configMoveLogic = ({ oldDirPath, newDirPath, editor }: Config) => {
   // const undoableEdit = rootUndoableEdit; //configUndoableEdit();
-  const removeDirer = configRemoveEmtpyDir({ undoableEdit });
+  const removeDirer = configRemoveEmtpyDir({ editor: editor });
   const makeNewPath = configMakeNewPath(oldDirPath, newDirPath);
   const statusBar = configMyStatusBar({ configMessageMaker: configMakeMoveMessage });
 
@@ -96,6 +96,6 @@ export const configMoveLogic = ({ oldDirPath, newDirPath, undoableEdit }: Config
     removeDirer: removeDirer,
     statusBar,
     makePathPossible: makePathPossible,
-    undoableEdit: undoableEdit,
+    editor: editor,
   });
 };

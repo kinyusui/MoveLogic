@@ -1,4 +1,4 @@
-import * as path from "path";
+import path from "path";
 
 export const removeExtension = (itemPath: string): string => {
   const pathParts = itemPath.split(path.sep);

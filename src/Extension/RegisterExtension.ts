@@ -1,4 +1,4 @@
-import * as vscode from "vscode";
+import vscode from "vscode";
 import { LoggerHandler } from "../Nonvscode/Logger.js";
 import { configExtension } from "./Extension.js";
 import { rootLoggerHandler } from "./Logger.js";
