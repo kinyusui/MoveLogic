@@ -1,4 +1,4 @@
-import vscode from "vscode";
+import * as vscode from "vscode";
 
 type ActiveQuickPick = vscode.QuickPick<vscode.QuickPickItem> | undefined;
 

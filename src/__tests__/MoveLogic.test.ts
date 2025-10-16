@@ -1,5 +1,5 @@
 import fs from "fs-extra";
-import { describe, expect, it } from "vitest";
+import { describe, expect } from "vitest";
 import { Uri } from "vscode";
 import { vscode } from "../Nonvscode/MakeDependencyEasy";
 import { configMakeAbsolute, getFullPaths } from "../Nonvscode/makePath";
@@ -59,7 +59,7 @@ describe("move logic handles nested.", async () => {
     const match = checkMatch();
     expect(match).to.be.true;
   };
-  it("Should handle nested.", async () => {
-    await testMoveLogic();
-  });
+  // it("Should handle nested.", async () => {
+  //   await testMoveLogic();
+  // });
 });

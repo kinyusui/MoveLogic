@@ -1,4 +1,4 @@
-import vscode from "vscode";
+import * as vscode from "vscode";
 // import { configMoveLogic } from "../Jscodeshift/MoveLogic";
 import { configMyQuickPick } from "../Nonvscode/Input.js";
 import { HandleMove } from "./HandleMove.js";

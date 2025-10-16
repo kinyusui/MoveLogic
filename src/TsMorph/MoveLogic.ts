@@ -1,7 +1,7 @@
 import { Presets, SingleBar } from "cli-progress";
 import fs from "fs-extra";
 import { Project, SourceFile } from "ts-morph";
-import vscode from "vscode";
+import * as vscode from "vscode";
 import { rootLoggerHandler } from "../Extension/Logger.js";
 import { configRemoveEmtpyDir, RemoveEmptyDir } from "../Extension/RemoveEmptyDir.js";
 import { LoggerHandler } from "../Nonvscode/Logger.js";
@@ -10,6 +10,7 @@ import { configUndoableEdit } from "../vscodeFunctions/Editor/UndoableEdit.js";
 import { makeProject } from "./Project.js";
 
 export const moveFile = (file: SourceFile, oldDirPath: string, newDirPath: string) => {
+  console.log(file.getFilePath());
   const newPath = baseMakeNewPath(file.getFilePath(), oldDirPath, newDirPath);
   file.move(newPath, { overwrite: true }); // move and update imports automatically
 };

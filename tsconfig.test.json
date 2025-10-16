@@ -1,9 +1,10 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "ESNext", // ← ESM for tests
-    "moduleResolution": "bundler", // ← or "node16"
+    "module": "nodenext", // ← ESM for tests
+    "moduleResolution": "nodenext", // ← or "node16"
     "types": ["vitest/globals", "node"]
   },
-  "include": ["src/**/*.test.ts", "src/**/*.spec.ts"]
+  "include": ["src/**/*.test.ts", "src/**/*.spec.ts"],
+  "exclude": ["node_modules", "**/node_modules/*"]
 }

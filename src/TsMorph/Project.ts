@@ -1,7 +1,7 @@
 import fs from "fs-extra";
 import path from "path";
 import { Project, ts } from "ts-morph";
-import vscode from "vscode";
+import * as vscode from "vscode";
 
 const getTsconfigPath = (uri: vscode.Uri) => {
   const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
