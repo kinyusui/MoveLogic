@@ -4,6 +4,7 @@ import {
   updateImports,
   UpdateImports,
 } from "../../Jscodeshift/UpdateImports/UpdateImports.js";
+import { configRemoveLogic, RemoveLogic } from "../RemoveEmptyDir.js";
 import { EditorFunctions } from "../UndoableButBuggy/EditorFunctions.type.js";
 
 export const makePathPossible = (filePath: string) => {
@@ -18,21 +19,14 @@ export type MakePathPossible = typeof makePathPossible;
 
 type Props = {
   // editor: vscode.WorkspaceEdit;
+  removeLogic: RemoveLogic;
   updateImports: UpdateImports;
 };
 
 export class Editor implements EditorFunctions {
   constructor(public props: Props) {}
-  deleteFile = async (filePath: string) => {
-    await fs.remove(filePath);
-  };
-
-  removeEmptyDir = async (dirPath: string) => {
-    const subNames = await fs.readdir(dirPath);
-    if (subNames.length === 0) {
-      await this.deleteFile(dirPath);
-    }
-  };
+  deleteFile = RemoveLogic.deleteFile;
+  removeEmptyDir = this.props.removeLogic.removeEmptyDir;
 
   renameFile = async (startPath: string, endPath: string) => {
     // await MyFs.rename(startPath, endPath);
@@ -46,7 +40,9 @@ export class Editor implements EditorFunctions {
 }
 
 export const configStableEdit = () => {
+  const removeLogic = configRemoveLogic();
   return new Editor({
     updateImports: updateImports,
+    removeLogic: removeLogic,
   });
 };
