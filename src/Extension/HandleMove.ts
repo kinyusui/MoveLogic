@@ -58,9 +58,9 @@ export class HandleMove {
 
     await this.executeMove(isDir, sourcePath, fileDirPath);
     // prettier-ignore
-    // const message = `\nMoved→: ${sourcePath}. `
-    //               + `\nTo Dir: ${fileDirPath}.`;
-    // loggerHandler.logDebugMessage(message);
+    const message = `\nMoved→: ${sourcePath}. `
+                  + `\nTo Dir: ${fileDirPath}.`;
+    loggerHandler.logDebugMessage(message);
   };
 
   handleMove = async (uri: Uri, selectedUris: Uri[]) => {

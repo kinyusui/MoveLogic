@@ -3,8 +3,6 @@ import fs from "fs-extra";
 import { Project, SourceFile } from "ts-morph";
 import * as vscode from "vscode";
 import { rootLoggerHandler } from "../Extension/Logger.js";
-import { configRemoveEmtpyDir, RemoveEmptyDir } from "../Extension/RemoveEmptyDir.js";
-import { configUndoableEdit } from "../Extension/UndoableButBuggy/UndoableEdit.js";
 import { LoggerHandler } from "../Nonvscode/Logger.js";
 import { baseMakeNewPath, Posixify, posixify } from "../Nonvscode/makePath.js";
 import { makeProject } from "./Project.js";
@@ -26,7 +24,6 @@ type MoveDirProps = CommonProps & {
   loggerHandler: LoggerHandler;
   showProgress: ShowProgress;
   posixify: Posixify;
-  removeEmptyDir: RemoveEmptyDir;
 };
 class MoveLogic {
   constructor(public props: MoveDirProps) {}
@@ -54,13 +51,13 @@ class MoveLogic {
   };
 
   moveDir = async (oldDirPath: string, newDirPath: string) => {
-    const { project, removeEmptyDir } = this.props;
+    const { project } = this.props;
     fs.ensureDirSync(newDirPath); // Ensure new directory exists
     const sourceFiles = this.getSourceFiles(project, oldDirPath);
     this.moveFiles(sourceFiles, oldDirPath, newDirPath);
     project.saveSync(); // --- Save all changes ---
 
-    await removeEmptyDir.removeEmptyDir(oldDirPath);
+    // await removeEmptyDir.removeEmptyDir(oldDirPath);
     this.props.loggerHandler.logDebugMessage("Removed Directories");
     await project.save();
   };
@@ -100,14 +97,12 @@ export const configMoveLogic = ({ uri, log = false }: ArgConfigMoveDir) => {
   const loggerHandler = rootLoggerHandler; //makeLoggerHandler(logChannelName);
   const bar = makeBar();
   const showProgress = makeShowProgress(log, bar);
-  const removeEmptyDir = configRemoveEmtpyDir({ editor: configUndoableEdit() });
   const moveDir = new MoveLogic({
     project,
     moveFile,
     showProgress,
     loggerHandler,
     posixify,
-    removeEmptyDir,
   });
   return moveDir;
 };

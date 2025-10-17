@@ -4,7 +4,6 @@ import {
   makePathPossible,
   MakePathPossible,
 } from "../Extension/NoUndoButStable/Edit.js";
-import { configRemoveEmtpyDir, RemoveEmptyDir } from "../Extension/RemoveEmptyDir.js";
 import { EditorFunctions } from "../Extension/UndoableButBuggy/EditorFunctions.type.js";
 import { path } from "../Nonvscode/MakeDependencyEasy.js";
 import { configMakeNewPath, getFullPaths, MakeNewPath } from "../Nonvscode/makePath.js";
@@ -13,7 +12,6 @@ import { MyFs } from "../vscodeFunctions/MyFS.js";
 type Props = {
   oldDirPath: string;
   makeNewPath: MakeNewPath;
-  removeDirer: RemoveEmptyDir;
   statusBar: MyStatusBar;
   makePathPossible: MakePathPossible;
   editor: EditorFunctions;
@@ -66,7 +64,7 @@ export class MoveLogic {
   };
 
   moveDir = async () => {
-    const { oldDirPath, removeDirer } = this.props;
+    const { oldDirPath } = this.props;
     const filePaths = getFullPaths(oldDirPath);
     const task: Command<string[]> = [this._moveDir, [filePaths]];
     await this.withStatusBar(task);
@@ -89,14 +87,12 @@ export type Config = {
 };
 export const configMoveLogic = ({ oldDirPath, newDirPath, editor }: Config) => {
   // const undoableEdit = rootUndoableEdit; //configUndoableEdit();
-  const removeDirer = configRemoveEmtpyDir({ editor: editor });
   const makeNewPath = configMakeNewPath(oldDirPath, newDirPath);
   const statusBar = configMyStatusBar({ configMessageMaker: configMakeMoveMessage });
 
   return new MoveLogic({
     oldDirPath,
     makeNewPath,
-    removeDirer: removeDirer,
     statusBar,
     makePathPossible: makePathPossible,
     editor: editor,
