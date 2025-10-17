@@ -18,7 +18,7 @@
     "move",
     "multi"
   ],
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.95.0"
   },
@@ -60,7 +60,8 @@
     "testCompile": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "vitest",
-    "type_check": "npx tsc --noEmit --watch"
+    "type_check": "npx tsc --noEmit --watch",
+    "publish": "vsce publish"
   },
   "dependencies": {
     "callsites": "^4.2.0",
