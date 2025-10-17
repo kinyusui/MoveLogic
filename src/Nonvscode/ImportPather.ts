@@ -1,7 +1,7 @@
 import path from "path";
 import { isRelative } from "../Jscodeshift/UpdateImports/UpdateNonMoveTargetImport.js";
-import { Posixify, posixify } from "../Nonvscode/makePath.js";
-import { configWorkspaceFs, WorkspaceFs } from "./WorkspaceFs.js";
+import { configWorkspaceFs, WorkspaceFs } from "../vscodeFunctions/WorkspaceFs.js";
+import { Posixify, posixify } from "./makePath.js";
 
 export const shortAndPosixify = (filePath: string) => {
   const shortPath = path.normalize(filePath);
