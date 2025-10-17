@@ -1,5 +1,5 @@
 import { vscode } from "../../Nonvscode/MakeDependencyEasy.js";
-import { makeUri } from "../MyFS.js";
+import { makeUri } from "../../vscodeFunctions/MyFS.js";
 import { EditorFunctions } from "./EditorFunctions.type.js";
 
 type Props = {

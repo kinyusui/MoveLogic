@@ -4,10 +4,10 @@ import { configMyQuickPick } from "../Nonvscode/Input.js";
 import { HandleMove } from "./HandleMove.js";
 import { configHandleUseSuggest, HandleUseSuggest } from "./HandleUseSuggest.js";
 import { rootLoggerHandler } from "./Logger.js";
-// import { configHandleMove } from "./NoUndoButStable/HandleMove";
+import { configHandleMove } from "./NoUndoButStable/HandleMove.js";
 
 import { SystemControl } from "./SystemTypes.type.js";
-import { configHandleMove } from "./UndoableButBuggy/HandleMove.js";
+// import { configHandleMove } from "./UndoableButBuggy/HandleMove.js";
 
 type CommandInfo = [string, (...args: any[]) => any];
 

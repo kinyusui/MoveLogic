@@ -1,5 +1,4 @@
-import { rootLoggerHandler } from "../../Extension/Logger.js";
-import { fs } from "../../Nonvscode/MakeDependencyEasy.js";
+import { fs, path } from "../../Nonvscode/MakeDependencyEasy.js";
 import {
   configImportPather,
   ImportPather,
@@ -10,30 +9,31 @@ import { updatePathUsingUpdater } from "./UpdateNonMoveTargetImport.js";
 type Props = {
   moveTargetPath: string;
   newPath: string;
+  newPathDir: string;
   importPather: ImportPather;
 };
 
 export class UpdateMoveTargetImports {
   constructor(public props: Props) {}
 
-  updateImport = (startDirPath: string, importPathInfo: ASTImportPath) => {
+  updateImport = (_: string, importPathInfo: ASTImportPath) => {
     const sourceInfo = importPathInfo.node.source;
     const importPath = sourceInfo.value as string;
+
     if (!importPath.startsWith(".")) return; // Skip non-relative imports
-    const { moveTargetPath, importPather } = this.props;
+    const { importPather, newPathDir, moveTargetPath } = this.props;
     const { getAbsolutePathOfImport, relativeFromDir } = importPather;
     const absImportPath = getAbsolutePathOfImport(importPath, moveTargetPath);
-    const newPathWrongSeparator = relativeFromDir(startDirPath, absImportPath);
+    const newPathWrongSeparator = relativeFromDir(newPathDir, absImportPath);
+
     sourceInfo.value = newPathWrongSeparator;
   };
 
   updateImports = () => {
     const { updateImport } = this;
-    const { importPather, newPath, moveTargetPath } = this.props;
+    const { importPather, moveTargetPath, newPath } = this.props;
     const { root } = updatePathUsingUpdater(moveTargetPath, updateImport, importPather);
     fs.writeFileSync(newPath, root.toSource());
-    rootLoggerHandler.logDebugMessage(newPath);
-    // await undoableEdit.rewrite(newPath, root.toSource());
   };
 }
 
@@ -42,9 +42,11 @@ export const configUpdateMoveTargetImports = (
   newPath: string
 ) => {
   const importPather = configImportPather();
+  const newPathDir = path.dirname(newPath);
   return new UpdateMoveTargetImports({
     moveTargetPath,
     newPath,
+    newPathDir: newPathDir,
     importPather,
   });
 };

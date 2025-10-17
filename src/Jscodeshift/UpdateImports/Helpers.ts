@@ -1,22 +1,9 @@
 import fs from "fs";
 import { ASTPath, ImportDeclaration, JSCodeshift } from "jscodeshift";
 import jscodeshift from "jscodeshift/src/core.js";
-import path from "path";
-
-export const isMoveTargetAnImport = (
-  moveTargetPath: string,
-  importPathInFile: string,
-  dirOfFileWithImport: string
-) => {
-  // const workspaceFs = configWorkspaceFs();
-  const absMoveTargetPath = path.resolve(moveTargetPath);
-  const absImportPath = path.resolve(dirOfFileWithImport, importPathInFile);
-  const match = absMoveTargetPath === absImportPath;
-  return match;
-};
 
 export type ASTImportPath = ASTPath<ImportDeclaration>;
-export type PathWithNoExtension = string;
+export type FilePath = string;
 
 export const getFileInfo = (filePath: string) => {
   const source: string = fs.readFileSync(filePath, "utf8");

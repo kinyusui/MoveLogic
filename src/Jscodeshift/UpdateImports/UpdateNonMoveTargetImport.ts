@@ -3,13 +3,9 @@ import {
   configImportPather,
   ImportPather,
 } from "../../vscodeFunctions/ImportPather.js";
+import { rootWorkspaceFs } from "../../vscodeFunctions/WorkspaceFs.js";
 import { removeExtension } from "../removeExtension.js";
-import {
-  ASTImportPath,
-  getFileInfo,
-  isMoveTargetAnImport,
-  PathWithNoExtension,
-} from "./Helpers.js";
+import { ASTImportPath, FilePath, getFileInfo } from "./Helpers.js";
 
 type UpdateImport = (startDirPath: string, importPathInfo: ASTImportPath) => void;
 export const updatePathUsingUpdater = (
@@ -29,12 +25,28 @@ export const updatePathUsingUpdater = (
 export class UpdateNonMoveTargetImport {
   updateOccurred: boolean;
   constructor(
-    public moveTargetPath: PathWithNoExtension,
-    public newPath: PathWithNoExtension,
+    public moveTargetPath: FilePath,
+    public newPath: FilePath,
     public importPather: ImportPather
   ) {
     this.updateOccurred = false;
   }
+
+  static isMoveTargetAnImport = (
+    moveTargetPath: string,
+    importPathInFile: string,
+    dirOfFileWithImport: string
+  ) => {
+    const absMoveTargetPath = rootWorkspaceFs.resolve(moveTargetPath);
+    const absImportPath = rootWorkspaceFs.resolve(
+      dirOfFileWithImport,
+      importPathInFile
+    );
+    const moveTargetNoExt = removeExtension(absMoveTargetPath);
+    const importPathNoExt = removeExtension(absImportPath);
+    const match = moveTargetNoExt === importPathNoExt;
+    return match;
+  };
 
   updateImport = (startDirPath: string, importPathInfo: ASTImportPath) => {
     const sourceInfo = importPathInfo.node.source;
@@ -42,7 +54,7 @@ export class UpdateNonMoveTargetImport {
     if (!importPath.startsWith(".")) return; // Skip non-relative imports
 
     const { moveTargetPath, newPath } = this;
-    const affectedByMove = isMoveTargetAnImport(
+    const affectedByMove = UpdateNonMoveTargetImport.isMoveTargetAnImport(
       moveTargetPath,
       importPath,
       startDirPath
@@ -62,8 +74,8 @@ export class UpdateNonMoveTargetImport {
 }
 
 export const configUpdateNonMoveTargetImport = (
-  moveTargetPath: PathWithNoExtension,
-  newPath: PathWithNoExtension
+  moveTargetPath: FilePath,
+  newPath: FilePath
 ) => {
   [moveTargetPath, newPath] = [moveTargetPath, newPath].map(removeExtension);
   const importPather = configImportPather();

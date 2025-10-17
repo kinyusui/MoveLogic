@@ -8,8 +8,12 @@ export const getWorkspaceRoot = () => {
 
 export class WorkspaceFs {
   constructor(public workspaceRoot: string) {}
-  resolve = (somePath: string) => {
-    return path.resolve(this.workspaceRoot, somePath);
+  resolve = (somePath: string, anotherPath?: string) => {
+    if (anotherPath) {
+      return path.resolve(somePath, anotherPath);
+    } else {
+      return path.resolve(this.workspaceRoot, somePath);
+    }
   };
 }
 
@@ -17,3 +21,5 @@ export const configWorkspaceFs = () => {
   const workspaceRoot = getWorkspaceRoot();
   return new WorkspaceFs(workspaceRoot);
 };
+
+export const rootWorkspaceFs = configWorkspaceFs();

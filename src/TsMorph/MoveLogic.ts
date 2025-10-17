@@ -4,9 +4,9 @@ import { Project, SourceFile } from "ts-morph";
 import * as vscode from "vscode";
 import { rootLoggerHandler } from "../Extension/Logger.js";
 import { configRemoveEmtpyDir, RemoveEmptyDir } from "../Extension/RemoveEmptyDir.js";
+import { configUndoableEdit } from "../Extension/UndoableButBuggy/UndoableEdit.js";
 import { LoggerHandler } from "../Nonvscode/Logger.js";
 import { baseMakeNewPath, Posixify, posixify } from "../Nonvscode/makePath.js";
-import { configUndoableEdit } from "../vscodeFunctions/Editor/UndoableEdit.js";
 import { makeProject } from "./Project.js";
 
 export const moveFile = (file: SourceFile, oldDirPath: string, newDirPath: string) => {

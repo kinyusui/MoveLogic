@@ -2,8 +2,8 @@ import fs from "fs-extra";
 import path from "path";
 import type { Uri } from "vscode";
 import { configMoveLogic } from "../Jscodeshift/MoveLogic.js";
-import { EditorFunctions } from "../vscodeFunctions/Editor/EditorFunctions.type.js";
 import { SystemControl } from "./SystemTypes.type.js";
+import { EditorFunctions } from "./UndoableButBuggy/EditorFunctions.type.js";
 
 type ContextBad = { isDir: boolean; fileDirPath: undefined; noWork: true };
 type Context = { isDir: boolean; fileDirPath: string; noWork: boolean };
@@ -58,19 +58,19 @@ export class HandleMove {
 
     await this.executeMove(isDir, sourcePath, fileDirPath);
     // prettier-ignore
-    const message = `\nMoved→: ${sourcePath}. `
-                  + `\nTo Dir: ${fileDirPath}.`;
-    loggerHandler.logDebugMessage(message);
+    // const message = `\nMoved→: ${sourcePath}. `
+    //               + `\nTo Dir: ${fileDirPath}.`;
+    // loggerHandler.logDebugMessage(message);
   };
 
   handleMove = async (uri: Uri, selectedUris: Uri[]) => {
-    const { myQuickPick, loggerHandler, editor, configEditor } = this.props;
+    const { myQuickPick, loggerHandler, configEditor } = this.props;
     try {
       this.props.editor = configEditor();
       myQuickPick.show();
       const parentDir = path.dirname(uri.fsPath);
       const inputDirPath = await myQuickPick.getInput(parentDir);
-      // rootLoggerHandler.logDebugMessage(inputDirPath);
+      loggerHandler.logDebugMessage(`Selected: \n${selectedUris.join("\n")}`);
       for (const oneUri of selectedUris) {
         await this.mainMoveLogic(oneUri, inputDirPath);
       }
@@ -78,7 +78,6 @@ export class HandleMove {
       loggerHandler.logDebugMessage(`Error: ${err}`);
     } finally {
       myQuickPick.hide(); // Guaranteed inside finally.
-      await this.props.editor.applyEdit();
       loggerHandler.logDebugMessage("Done");
     }
   };

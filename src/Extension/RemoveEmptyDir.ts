@@ -1,9 +1,9 @@
 import fs from "fs-extra";
 import path from "path";
-import { EditorFunctions } from "../vscodeFunctions/Editor/EditorFunctions.type.js";
+import { EditorFunctions } from "./UndoableButBuggy/EditorFunctions.type.js";
 
 type Props = {
-  undoableEdit: EditorFunctions;
+  editor: EditorFunctions;
 };
 
 export class RemoveEmptyDir {
@@ -27,9 +27,9 @@ export class RemoveEmptyDir {
 
   removeIfEmpty = async (dirPath: string) => {
     const { subDirPaths, subPaths } = await this.getSubDirPaths(dirPath);
-    const { undoableEdit } = this.props;
+    const { editor } = this.props;
     if (subPaths.length === 0) {
-      await undoableEdit.deleteFile(dirPath);
+      await editor.deleteFile(dirPath);
     }
     return subDirPaths;
   };
@@ -52,6 +52,6 @@ type Config = {
 
 export const configRemoveEmtpyDir = (config: Config) => {
   return new RemoveEmptyDir({
-    undoableEdit: config.editor,
+    editor: config.editor,
   });
 };

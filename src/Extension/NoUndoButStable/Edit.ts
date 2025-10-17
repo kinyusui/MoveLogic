@@ -4,8 +4,8 @@ import {
   updateImports,
   UpdateImports,
 } from "../../Jscodeshift/UpdateImports/UpdateImports.js";
-import { MyFs } from "../MyFS.js";
-import { EditorFunctions } from "./EditorFunctions.type.js";
+import { MyFs } from "../../vscodeFunctions/MyFS.js";
+import { EditorFunctions } from "../UndoableButBuggy/EditorFunctions.type.js";
 
 export const makePathPossible = (filePath: string) => {
   const dirPath = path.dirname(filePath);
@@ -25,16 +25,16 @@ type Props = {
 export class Editor implements EditorFunctions {
   constructor(public props: Props) {}
   renameFile = async (startPath: string, endPath: string) => {
-    await MyFs.rename(startPath, endPath);
+    // await MyFs.rename(startPath, endPath);
+    // await fs.move(startPath, endPath, { overwrite: true });
+    await fs.createFile(endPath);
     await this.props.updateImports(startPath, endPath);
-    // await this.applyEdit();
+    await fs.remove(startPath);
   };
 
   deleteFile = async (filePath: string) => {
     await MyFs.delete(filePath);
   };
-
-  applyEdit = async () => {};
 }
 
 export const configStableEdit = () => {

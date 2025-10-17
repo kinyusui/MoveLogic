@@ -37,18 +37,18 @@ export function getDirname(functionWrappers: number = 1): string {
 }
 
 export const getFullPaths = (dirPath: string) => {
-  const fileNames: FullPath[] = [];
+  const filePaths: FullPath[] = [];
   const files: fs.Dirent[] = fs.readdirSync(dirPath, { withFileTypes: true });
   for (const file of files) {
     const fullPath = path.join(dirPath, file.name);
     if (file.isFile()) {
-      fileNames.push(fullPath);
+      filePaths.push(fullPath);
     } else if (file.isDirectory()) {
       const _fileNames = getFullPaths(fullPath);
-      fileNames.push(..._fileNames);
+      filePaths.push(..._fileNames);
     }
   }
-  return fileNames;
+  return filePaths;
 };
 
 export type PosixPath = string; // path with forward slashes.

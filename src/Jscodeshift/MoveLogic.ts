@@ -1,10 +1,14 @@
 import { rootLoggerHandler } from "../Extension/Logger.js";
 import { configMyStatusBar, MyStatusBar } from "../Extension/MyStatusBar.js";
+import {
+  makePathPossible,
+  MakePathPossible,
+} from "../Extension/NoUndoButStable/Edit.js";
 import { configRemoveEmtpyDir, RemoveEmptyDir } from "../Extension/RemoveEmptyDir.js";
+import { EditorFunctions } from "../Extension/UndoableButBuggy/EditorFunctions.type.js";
 import { path } from "../Nonvscode/MakeDependencyEasy.js";
 import { configMakeNewPath, getFullPaths, MakeNewPath } from "../Nonvscode/makePath.js";
-import { makePathPossible, MakePathPossible } from "../vscodeFunctions/Editor/Edit.js";
-import { EditorFunctions } from "../vscodeFunctions/Editor/EditorFunctions.type.js";
+import { MyFs } from "../vscodeFunctions/MyFS.js";
 
 type Props = {
   oldDirPath: string;
@@ -27,13 +31,12 @@ export class MoveLogic {
     const { editor } = this.props;
     const moveTargetPath: string = path.normalize(sourceFile);
     const endFilePath = makeNewPath(sourceFile);
-    makePathPossible(endFilePath);
-    rootLoggerHandler.logDebugMessage(`made path for ${endFilePath}`);
-    // await fs.promises.rename(moveTargetPath, endFilePath);
-    // await MyFs.rename(moveTargetPath, endFilePath);
-    await editor.renameFile(moveTargetPath, endFilePath);
+    const noWorkNeeded = !MyFs.existSync(moveTargetPath);
+    if (noWorkNeeded) return;
 
-    // await updateImports(moveTargetPath, endFilePath);
+    makePathPossible(endFilePath);
+
+    await editor.renameFile(moveTargetPath, endFilePath);
 
     statusBar.updateProgress();
   };
@@ -56,7 +59,7 @@ export class MoveLogic {
       statusBar.start(workLength);
       await task(...taskArg);
     } catch (err: any) {
-      rootLoggerHandler.logDebugMessage(err);
+      rootLoggerHandler.logDebugMessage(`Error on top move: ${err}`);
     } finally {
       statusBar.end();
     }
