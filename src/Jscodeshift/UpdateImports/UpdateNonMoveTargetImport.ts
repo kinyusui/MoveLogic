@@ -22,6 +22,8 @@ export const updatePathUsingUpdater = (
   return { importPathInfos, root };
 };
 
+export const isRelative = (filePath: string) => filePath.startsWith(".");
+
 export class UpdateNonMoveTargetImport {
   updateOccurred: boolean;
   constructor(
@@ -51,7 +53,7 @@ export class UpdateNonMoveTargetImport {
   updateImport = (startDirPath: string, importPathInfo: ASTImportPath) => {
     const sourceInfo = importPathInfo.node.source;
     const importPath: string = sourceInfo.value as string;
-    if (!importPath.startsWith(".")) return; // Skip non-relative imports
+    if (!isRelative(importPath)) return; // Skip non-relative imports
 
     const { moveTargetPath, newPath } = this;
     const affectedByMove = UpdateNonMoveTargetImport.isMoveTargetAnImport(

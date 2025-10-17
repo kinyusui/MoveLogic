@@ -1,4 +1,5 @@
 import path from "path";
+import { isRelative } from "../Jscodeshift/UpdateImports/UpdateNonMoveTargetImport.js";
 import { Posixify, posixify } from "../Nonvscode/makePath.js";
 import { configWorkspaceFs, WorkspaceFs } from "./WorkspaceFs.js";
 
@@ -9,7 +10,7 @@ export const shortAndPosixify = (filePath: string) => {
 
 const makeRawRelativePath = (absBaseDirPath: string, otherFilePath: string) => {
   const filePath = path.relative(absBaseDirPath, otherFilePath);
-  return filePath.startsWith(".") ? filePath : `./${filePath}`;
+  return isRelative(filePath) ? filePath : `./${filePath}`;
 };
 
 export class ImportPather {

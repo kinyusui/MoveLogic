@@ -4,7 +4,6 @@ import {
   updateImports,
   UpdateImports,
 } from "../../Jscodeshift/UpdateImports/UpdateImports.js";
-import { MyFs } from "../../vscodeFunctions/MyFS.js";
 import { EditorFunctions } from "../UndoableButBuggy/EditorFunctions.type.js";
 
 export const makePathPossible = (filePath: string) => {
@@ -33,7 +32,7 @@ export class Editor implements EditorFunctions {
   };
 
   deleteFile = async (filePath: string) => {
-    await MyFs.delete(filePath);
+    await fs.remove(filePath);
   };
 }
 
