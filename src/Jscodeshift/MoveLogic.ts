@@ -17,9 +17,8 @@ type Props = {
   editor: EditorFunctions;
 };
 
-type Args<TArg> = TArg[];
-type MoverForStatusBar<TArg> = (...filePath: Args<TArg>) => Promise<void>;
-type Command<TArg> = [MoverForStatusBar<TArg>, Args<TArg>];
+type MoverForStatusBar = (...filePath: string[]) => Promise<void>;
+type Command = [MoverForStatusBar, string[]];
 
 export class MoveLogic {
   constructor(public props: Props) {}
@@ -40,20 +39,20 @@ export class MoveLogic {
   };
 
   moveFile = async (sourceFile: string) => {
-    const task: Command<string> = [this._moveFile, [sourceFile]];
+    const task: Command = [this._moveFile, [sourceFile]];
     await this.withStatusBar(task);
   };
 
-  _moveDir = async (filePaths: string[]) => {
+  _moveDir = async (...filePaths: string[]) => {
     for (const filePath of filePaths) {
       await this._moveFile(filePath);
     }
   };
 
-  withStatusBar = async <TArg>([task, taskArg]: Command<TArg>) => {
+  withStatusBar = async ([task, taskArg]: Command) => {
     const { statusBar } = this.props;
     try {
-      const workLength = Array.isArray(taskArg) ? taskArg.length : 1;
+      const workLength = taskArg.length;
       statusBar.start(workLength);
       await task(...taskArg);
     } catch (err: any) {
@@ -66,7 +65,7 @@ export class MoveLogic {
   moveDir = async () => {
     const { oldDirPath } = this.props;
     const filePaths = getFullPaths(oldDirPath);
-    const task: Command<string[]> = [this._moveDir, [filePaths]];
+    const task: Command = [this._moveDir, filePaths];
     await this.withStatusBar(task);
     // await removeDirer.removeEmptyDir(oldDirPath);
   };
