@@ -1,4 +1,5 @@
 import callsites from "callsites";
+import { Dirent } from "fs";
 import fs from "fs-extra";
 import path from "path";
 import { fillDefaults } from "./Dict.js";
@@ -42,27 +43,38 @@ const checkIsTargetFile = (file: fs.Dirent, targetTypes: Set<string>) => {
   return targetTypes.has(extension);
 };
 
-export const getFullPaths = (dirPath: string, targetTypes: Set<string> = tsTypes) => {
+const configCheckIsTargetFile = (targetTypes: Set<string>) => {
+  return (file: Dirent) => checkIsTargetFile(file, targetTypes);
+};
+type ConfigCheckIsTargetFile = typeof configCheckIsTargetFile;
+
+const checkIsTsLike = configCheckIsTargetFile(tsTypes);
+type CheckIsTargetFile = typeof checkIsTsLike;
+
+export const getFullPaths = (dirPath: string, checkIsTargetFile: CheckIsTargetFile) => {
   const filePaths: FullPath[] = [];
   const files: fs.Dirent[] = fs.readdirSync(dirPath, { withFileTypes: true });
   for (const file of files) {
     const fullPath = path.join(dirPath, file.name);
     if (file.isFile()) {
-      const isTargetFile = checkIsTargetFile(file, targetTypes);
+      const isTargetFile = checkIsTargetFile(file);
       if (!isTargetFile) continue;
       filePaths.push(fullPath);
     } else if (file.isDirectory()) {
-      const _fileNames = getFullPaths(fullPath, targetTypes);
+      const _fileNames = getFullPaths(fullPath, checkIsTargetFile);
       filePaths.push(..._fileNames);
     }
   }
   return filePaths;
 };
 
-export const configGetFullPaths = (targetTypes: Set<string>) => {
-  return (dirPath: string) => getFullPaths(dirPath, targetTypes);
+export const configGetFullPaths = (checkIsTargetFile: CheckIsTargetFile) => {
+  return (dirPath: string) => getFullPaths(dirPath, checkIsTargetFile);
 };
-export const getFullTsPaths = configGetFullPaths(tsTypes);
+
+const alwaysTrue = (file: Dirent) => true;
+export const getFullPathsAny = configGetFullPaths(alwaysTrue);
+export const getFullTsPaths = configGetFullPaths(checkIsTsLike);
 
 export type PosixPath = string; // path with forward slashes.
 

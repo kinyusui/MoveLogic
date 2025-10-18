@@ -8,7 +8,7 @@ import { EditorFunctions } from "../Extension/UndoableButBuggy/EditorFunctions.t
 import { path } from "../Nonvscode/MakeDependencyEasy.js";
 import {
   configMakeNewPath,
-  getFullTsPaths,
+  getFullPathsAny,
   MakeNewPath,
 } from "../Nonvscode/makePath.js";
 import { MyFs } from "../vscodeFunctions/MyFS.js";
@@ -68,7 +68,7 @@ export class MoveLogic {
 
   moveDir = async () => {
     const { oldDirPath } = this.props;
-    const filePaths = getFullTsPaths(oldDirPath);
+    const filePaths = getFullPathsAny(oldDirPath);
     const task: Command = [this._moveDir, filePaths];
     await this.withStatusBar(task);
     // await removeDirer.removeEmptyDir(oldDirPath);
