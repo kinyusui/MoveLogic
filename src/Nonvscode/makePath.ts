@@ -36,20 +36,33 @@ export function getDirname(functionWrappers: number = 1): string {
   return path.dirname(callSiteFilePath);
 }
 
-export const getFullPaths = (dirPath: string) => {
+const tsTypes = new Set(["ts", "tsx", "js", "jsx"]);
+const checkIsTargetFile = (file: fs.Dirent, targetTypes: Set<string>) => {
+  const extension = file.name.split(".")[1] ?? "";
+  return targetTypes.has(extension);
+};
+
+export const getFullPaths = (dirPath: string, targetTypes: Set<string> = tsTypes) => {
   const filePaths: FullPath[] = [];
   const files: fs.Dirent[] = fs.readdirSync(dirPath, { withFileTypes: true });
   for (const file of files) {
     const fullPath = path.join(dirPath, file.name);
     if (file.isFile()) {
+      const isTargetFile = checkIsTargetFile(file, targetTypes);
+      if (!isTargetFile) continue;
       filePaths.push(fullPath);
     } else if (file.isDirectory()) {
-      const _fileNames = getFullPaths(fullPath);
+      const _fileNames = getFullPaths(fullPath, targetTypes);
       filePaths.push(..._fileNames);
     }
   }
   return filePaths;
 };
+
+export const configGetFullPaths = (targetTypes: Set<string>) => {
+  return (dirPath: string) => getFullPaths(dirPath, targetTypes);
+};
+export const getFullTsPaths = configGetFullPaths(tsTypes);
 
 export type PosixPath = string; // path with forward slashes.
 
