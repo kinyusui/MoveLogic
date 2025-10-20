@@ -38,17 +38,23 @@ export function getDirname(functionWrappers: number = 1): string {
 }
 
 const tsTypes = new Set(["ts", "tsx", "js", "jsx"]);
-const checkIsTargetFile = (file: fs.Dirent, targetTypes: Set<string>) => {
-  const extension = file.name.split(".")[1] ?? "";
+type FileLike = Dirent | string;
+const checkIsTargetFile = (file: FileLike, targetTypes: Set<string>) => {
+  let extension: string;
+  if (file instanceof Dirent) {
+    extension = file.name.split(".")[1] ?? "";
+  } else {
+    extension = path.extname(file);
+  }
   return targetTypes.has(extension);
 };
 
 const configCheckIsTargetFile = (targetTypes: Set<string>) => {
-  return (file: Dirent) => checkIsTargetFile(file, targetTypes);
+  return (file: FileLike) => checkIsTargetFile(file, targetTypes);
 };
 type ConfigCheckIsTargetFile = typeof configCheckIsTargetFile;
 
-const checkIsTsLike = configCheckIsTargetFile(tsTypes);
+export const checkIsTsLike = configCheckIsTargetFile(tsTypes);
 type CheckIsTargetFile = typeof checkIsTsLike;
 
 export const getFullPaths = (dirPath: string, checkIsTargetFile: CheckIsTargetFile) => {
@@ -72,7 +78,7 @@ export const configGetFullPaths = (checkIsTargetFile: CheckIsTargetFile) => {
   return (dirPath: string) => getFullPaths(dirPath, checkIsTargetFile);
 };
 
-const alwaysTrue = (file: Dirent) => true;
+const alwaysTrue = (file: FileLike) => true;
 export const getFullPathsAny = configGetFullPaths(alwaysTrue);
 export const getFullTsPaths = configGetFullPaths(checkIsTsLike);
 

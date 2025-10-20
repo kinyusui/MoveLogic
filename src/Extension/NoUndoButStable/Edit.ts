@@ -4,6 +4,7 @@ import {
   updateImports,
   UpdateImports,
 } from "../../Jscodeshift/UpdateImports/UpdateImports.js";
+import { checkIsTsLike } from "../../Nonvscode/makePath.js";
 import { configRemoveLogic, RemoveLogic } from "../RemoveEmptyDir.js";
 import { EditorFunctions } from "../UndoableButBuggy/EditorFunctions.type.js";
 
@@ -28,11 +29,20 @@ export class Editor implements EditorFunctions {
   deleteFile = RemoveLogic.deleteFile;
   removeEmptyDir = this.props.removeLogic.removeEmptyDir;
 
+  createNewFile = async (startPath: string, endPath: string) => {
+    const isTsLike = checkIsTsLike(startPath);
+    if (isTsLike) {
+      await fs.createFile(endPath);
+      await this.props.updateImports(startPath, endPath);
+    } else {
+      await fs.copyFile(startPath, endPath);
+    }
+  };
+
   renameFile = async (startPath: string, endPath: string) => {
     // await MyFs.rename(startPath, endPath);
     // await fs.move(startPath, endPath, { overwrite: true });
-    await fs.createFile(endPath);
-    await this.props.updateImports(startPath, endPath);
+    await this.createNewFile(startPath, endPath);
     await fs.remove(startPath);
     const startDir = path.dirname(startPath);
     await this.removeEmptyDir(startDir);

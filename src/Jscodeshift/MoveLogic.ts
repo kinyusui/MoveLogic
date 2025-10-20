@@ -67,10 +67,11 @@ export class MoveLogic {
   };
 
   moveDir = async () => {
-    const { oldDirPath } = this.props;
+    const { oldDirPath, editor } = this.props;
     const filePaths = getFullPathsAny(oldDirPath);
     const task: Command = [this._moveDir, filePaths];
     await this.withStatusBar(task);
+    await editor.removeEmptyDir(oldDirPath);
     // await removeDirer.removeEmptyDir(oldDirPath);
   };
 }

@@ -24,6 +24,8 @@ export class UndoableEdit implements EditorFunctions {
   applyEdit = async () => {
     await vscode.workspace.applyEdit(this.props.editor);
   };
+
+  removeEmptyDir = async (dirPath: string) => {};
 }
 
 export const configUndoableEdit = () => {
