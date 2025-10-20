@@ -1,16 +1,15 @@
-import { rootLoggerHandler } from "../Extension/Logger.js";
 import { configMyStatusBar, MyStatusBar } from "../Extension/MyStatusBar.js";
 import {
   makePathPossible,
   MakePathPossible,
 } from "../Extension/NoUndoButStable/Edit.js";
 import { EditorFunctions } from "../Extension/UndoableButBuggy/EditorFunctions.type.js";
-import { path } from "../Nonvscode/MakeDependencyEasy.js";
 import {
   configMakeNewPath,
   getFullPathsAny,
   MakeNewPath,
 } from "../Nonvscode/makePath.js";
+import { path } from "../vscodeFunctions/MakeDependencyEasy.js";
 import { MyFs } from "../vscodeFunctions/MyFS.js";
 
 type Props = {
@@ -56,11 +55,10 @@ export class MoveLogic {
   withStatusBar = async ([task, taskArg]: Command) => {
     const { statusBar } = this.props;
     try {
-      const workLength = taskArg.length;
-      statusBar.start(workLength);
-      await task(...taskArg);
-    } catch (err: any) {
-      rootLoggerHandler.logDebugMessage(`Error on top move: ${err}`);
+      throw new Error("Debug Error");
+      // const workLength = taskArg.length;
+      // statusBar.start(workLength);
+      // await task(...taskArg);
     } finally {
       statusBar.end();
     }

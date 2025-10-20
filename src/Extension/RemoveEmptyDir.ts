@@ -1,5 +1,5 @@
 import fs from "fs-extra";
-import { path } from "../Nonvscode/MakeDependencyEasy.js";
+import { path } from "../vscodeFunctions/MakeDependencyEasy.js";
 
 export class RemoveLogic {
   constructor() {}

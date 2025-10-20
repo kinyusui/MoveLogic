@@ -44,8 +44,6 @@ export class Editor implements EditorFunctions {
     // await fs.move(startPath, endPath, { overwrite: true });
     await this.createNewFile(startPath, endPath);
     await fs.remove(startPath);
-    const startDir = path.dirname(startPath);
-    await this.removeEmptyDir(startDir);
   };
 }
 

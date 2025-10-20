@@ -1,5 +1,5 @@
 import { configImportPather, ImportPather } from "../../Nonvscode/ImportPather.js";
-import { fs } from "../../Nonvscode/MakeDependencyEasy.js";
+import { fs } from "../../vscodeFunctions/MakeDependencyEasy.js";
 import { rootWorkspaceFs } from "../../vscodeFunctions/WorkspaceFs.js";
 import { removeExtension } from "../removeExtension.js";
 import { ASTImportPath, FilePath, getFileInfo } from "./Helpers.js";

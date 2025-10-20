@@ -1,4 +1,4 @@
-import { vscode } from "../../Nonvscode/MakeDependencyEasy.js";
+import { vscode } from "../../vscodeFunctions/MakeDependencyEasy.js";
 import { makeUri } from "../../vscodeFunctions/MyFS.js";
 import { EditorFunctions } from "./EditorFunctions.type.js";
 

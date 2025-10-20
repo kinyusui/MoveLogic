@@ -39,13 +39,10 @@ export function getDirname(functionWrappers: number = 1): string {
 
 const tsTypes = new Set(["ts", "tsx", "js", "jsx"]);
 type FileLike = Dirent | string;
+const extFromBasename = (basename: string) => basename.split(".")[1] ?? "";
 const checkIsTargetFile = (file: FileLike, targetTypes: Set<string>) => {
-  let extension: string;
-  if (file instanceof Dirent) {
-    extension = file.name.split(".")[1] ?? "";
-  } else {
-    extension = path.extname(file);
-  }
+  const basename = file instanceof Dirent ? file.name : path.basename(file);
+  const extension = extFromBasename(basename);
   return targetTypes.has(extension);
 };
 

@@ -2,6 +2,7 @@ import fs from "fs-extra";
 import path from "path";
 import type { Uri } from "vscode";
 import { configMoveLogic } from "../Jscodeshift/MoveLogic.js";
+import { vscode } from "../vscodeFunctions/MakeDependencyEasy.js";
 import { SystemControl } from "./SystemTypes.type.js";
 import { EditorFunctions } from "./UndoableButBuggy/EditorFunctions.type.js";
 
@@ -75,10 +76,12 @@ export class HandleMove {
         await this.mainMoveLogic(oneUri, inputDirPath);
       }
     } catch (err: any) {
-      loggerHandler.logDebugMessage(`Error: ${err}`);
+      const message = `Error on move: ${err}.`;
+      vscode.window.showErrorMessage(message);
+      loggerHandler.logDebugMessage(message);
     } finally {
       myQuickPick.hide(); // Guaranteed inside finally.
-      loggerHandler.logDebugMessage("Done");
+      loggerHandler.logDebugMessage("Done.");
     }
   };
 }

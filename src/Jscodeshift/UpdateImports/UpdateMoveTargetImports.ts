@@ -1,5 +1,5 @@
 import { configImportPather, ImportPather } from "../../Nonvscode/ImportPather.js";
-import { fs, path } from "../../Nonvscode/MakeDependencyEasy.js";
+import { fs, path } from "../../vscodeFunctions/MakeDependencyEasy.js";
 import { ASTImportPath } from "./Helpers.js";
 import { updatePathUsingUpdater } from "./UpdateNonMoveTargetImport.js";
 

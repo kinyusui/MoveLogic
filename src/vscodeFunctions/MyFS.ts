@@ -1,4 +1,4 @@
-import { fs, vscode } from "../Nonvscode/MakeDependencyEasy.js";
+import { fs, vscode } from "./MakeDependencyEasy.js";
 
 export const vscodeFs = vscode.workspace.fs;
 
