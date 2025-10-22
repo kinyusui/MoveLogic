@@ -16,7 +16,10 @@
     "TS",
     "ts",
     "move",
-    "multi"
+    "multi",
+    "tsMove",
+    "tsmove",
+    "tsMultiMove"
   ],
   "version": "0.0.8",
   "engines": {

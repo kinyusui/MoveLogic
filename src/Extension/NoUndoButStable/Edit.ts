@@ -40,8 +40,6 @@ export class Editor implements EditorFunctions {
   };
 
   renameFile = async (startPath: string, endPath: string) => {
-    // await MyFs.rename(startPath, endPath);
-    // await fs.move(startPath, endPath, { overwrite: true });
     await this.createNewFile(startPath, endPath);
     await fs.remove(startPath);
   };
