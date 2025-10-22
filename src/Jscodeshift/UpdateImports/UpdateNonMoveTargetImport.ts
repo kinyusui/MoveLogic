@@ -66,6 +66,9 @@ export class UpdateNonMoveTargetImport {
   };
 
   updateFile = (filePath: string) => {
+    const fileMissing = !fs.existsSync(filePath);
+    if (fileMissing) return;
+
     const { updateImport, importPather } = this;
     const { root } = updatePathUsingUpdater(filePath, updateImport, importPather);
     if (this.updateOccurred) fs.writeFileSync(filePath, root.toSource());

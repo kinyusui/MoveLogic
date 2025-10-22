@@ -55,10 +55,9 @@ export class MoveLogic {
   withStatusBar = async ([task, taskArg]: Command) => {
     const { statusBar } = this.props;
     try {
-      throw new Error("Debug Error");
-      // const workLength = taskArg.length;
-      // statusBar.start(workLength);
-      // await task(...taskArg);
+      const workLength = taskArg.length;
+      statusBar.start(workLength);
+      await task(...taskArg);
     } finally {
       statusBar.end();
     }

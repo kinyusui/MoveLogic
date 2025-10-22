@@ -76,7 +76,7 @@ export class HandleMove {
         await this.mainMoveLogic(oneUri, inputDirPath);
       }
     } catch (err: any) {
-      const message = `Error on move: ${err}.`;
+      const message = `Error on move: ${err.stack}.`;
       vscode.window.showErrorMessage(message);
       loggerHandler.logDebugMessage(message);
     } finally {
