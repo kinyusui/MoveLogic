@@ -11,10 +11,15 @@ const getFiles = async (
   excludes: string[],
   workspaceFs: WorkspaceFs
 ): Promise<string[]> => {
+  // Limit concurrency to avoid EMFILE (too many open files) on large workspaces.
+  // fast-glob performs many parallel fs operations; setting `concurrency` and
+  // `onlyFiles` keeps resource usage lower and results stable.
   const matchSettings = {
     ignore: excludes,
     cwd: workspaceFs.workspaceRoot,
-  };
+    onlyFiles: true,
+    concurrency: 20,
+  } as const;
   const files: string[] = [];
   for (const pattern of includes) {
     const found: string[] = await fg(pattern, matchSettings);
