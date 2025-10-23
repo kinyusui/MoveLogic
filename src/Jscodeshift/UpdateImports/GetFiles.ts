@@ -30,7 +30,16 @@ const getFiles = async (
 
 export const getProjectFiles = async () => {
   const includes = ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"];
-  const excludes = ["**/node_modules/**"];
+  const excludes = [
+    "**/node_modules/**",
+    "**/.git/**",
+    "**/dist/**",
+    "**/out/**",
+    "**/.vscode/**",
+    "**/.expo/**",
+    "**/.idea/**",
+    "**/venv/**",
+  ];
   const workspaceFs = configWorkspaceFs();
   return await getFiles(includes, excludes, workspaceFs);
 };

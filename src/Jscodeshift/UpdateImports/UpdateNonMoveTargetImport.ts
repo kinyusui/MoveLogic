@@ -1,8 +1,29 @@
+import fs from "fs";
+import { JSCodeshift } from "jscodeshift";
+import jscodeshift from "jscodeshift/src/core.js";
 import { configImportPather, ImportPather } from "../../Nonvscode/ImportPather.js";
-import { fs } from "../../vscodeFunctions/MakeDependencyEasy.js";
+import { checkIsTsLike, getExtension } from "../../Nonvscode/makePath.js";
 import { rootWorkspaceFs } from "../../vscodeFunctions/WorkspaceFs.js";
 import { removeExtension } from "../removeExtension.js";
-import { ASTImportPath, FilePath, getFileInfo } from "./Helpers.js";
+import { ASTImportPath, FilePath } from "./Helpers.js";
+
+const makeParserExtension = (filePath: string) => {
+  const extension = getExtension(filePath);
+  const isTargetType = checkIsTsLike(filePath);
+  if (!isTargetType) return extension;
+
+  const tsxOrJsxType = `${extension[0]}sx`;
+  return tsxOrJsxType;
+};
+
+export const getFileInfo = (filePath: string) => {
+  const extension = makeParserExtension(filePath);
+  const makeRoot: JSCodeshift = jscodeshift.withParser(extension);
+  const source: string = fs.readFileSync(filePath, "utf8");
+  const root = makeRoot(source);
+  const importPathInfos = root.find(makeRoot.ImportDeclaration);
+  return { importPathInfos, root };
+};
 
 type UpdateImport = (startDirPath: string, importPathInfo: ASTImportPath) => void;
 export const updatePathUsingUpdater = (

@@ -39,15 +39,16 @@ export function getDirname(functionWrappers: number = 1): string {
 
 const tsTypes = new Set(["ts", "tsx", "js", "jsx"]);
 type FileLike = Dirent | string;
-const extFromBasename = (basename: string) => {
+export const getExtension = (basename: string) => {
   const nameParts = basename.split(".");
   if (nameParts.length < 2) return "";
 
   return nameParts[nameParts.length - 1];
 };
+
 const checkIsTargetFile = (file: FileLike, targetTypes: Set<string>) => {
   const basename = file instanceof Dirent ? file.name : path.basename(file);
-  const extension = extFromBasename(basename);
+  const extension = getExtension(basename);
   return targetTypes.has(extension);
 };
 
@@ -57,7 +58,7 @@ const configCheckIsTargetFile = (targetTypes: Set<string>) => {
 type ConfigCheckIsTargetFile = typeof configCheckIsTargetFile;
 
 export const checkIsTsLike = configCheckIsTargetFile(tsTypes);
-type CheckIsTargetFile = typeof checkIsTsLike;
+export type CheckIsTargetFile = typeof checkIsTsLike;
 
 export const getFullPaths = (dirPath: string, checkIsTargetFile: CheckIsTargetFile) => {
   const filePaths: FullPath[] = [];

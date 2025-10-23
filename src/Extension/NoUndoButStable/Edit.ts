@@ -4,7 +4,7 @@ import {
   updateImports,
   UpdateImports,
 } from "../../Jscodeshift/UpdateImports/UpdateImports.js";
-import { checkIsTsLike } from "../../Nonvscode/makePath.js";
+import { CheckIsTargetFile, checkIsTsLike } from "../../Nonvscode/makePath.js";
 import { configRemoveLogic, RemoveLogic } from "../RemoveEmptyDir.js";
 import { EditorFunctions } from "../UndoableButBuggy/EditorFunctions.type.js";
 
@@ -22,6 +22,7 @@ type Props = {
   // editor: vscode.WorkspaceEdit;
   removeLogic: RemoveLogic;
   updateImports: UpdateImports;
+  checkIsTsLike: CheckIsTargetFile;
 };
 
 export class Editor implements EditorFunctions {
@@ -30,7 +31,7 @@ export class Editor implements EditorFunctions {
   removeEmptyDir = this.props.removeLogic.removeEmptyDir;
 
   createNewFile = async (startPath: string, endPath: string) => {
-    const isTsLike = checkIsTsLike(startPath);
+    const isTsLike = this.props.checkIsTsLike(startPath);
     if (isTsLike) {
       await fs.createFile(endPath);
       await this.props.updateImports(startPath, endPath);
@@ -50,5 +51,6 @@ export const configStableEdit = () => {
   return new Editor({
     updateImports: updateImports,
     removeLogic: removeLogic,
+    checkIsTsLike: checkIsTsLike,
   });
 };
