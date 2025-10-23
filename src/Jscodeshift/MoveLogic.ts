@@ -30,10 +30,10 @@ export class MoveLogic {
     const { makeNewPath, makePathPossible, statusBar } = this.props;
     const { editor } = this.props;
     const moveTargetPath: string = path.normalize(sourceFile);
-    const endFilePath = makeNewPath(sourceFile);
     const noWorkNeeded = !MyFs.existSync(moveTargetPath);
     if (noWorkNeeded) return;
 
+    const endFilePath = makeNewPath(sourceFile);
     makePathPossible(endFilePath);
 
     await editor.renameFile(moveTargetPath, endFilePath);
