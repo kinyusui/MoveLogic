@@ -1,7 +1,7 @@
 import { configImportPather, ImportPather } from "../../Nonvscode/ImportPather.js";
 import { fs, path } from "../../vscodeFunctions/MakeDependencyEasy.js";
-import { ASTImportPath } from "./Helpers.js";
-import { updatePathUsingUpdater } from "./UpdateNonMoveTargetImport.js";
+import { ImportPath } from "./ImportPath.js";
+import { UpdateImport, updatePathUsingUpdater } from "./UpdatePathUsingUpdater.js";
 
 type Props = {
   moveTargetPath: string;
@@ -13,9 +13,8 @@ type Props = {
 export class UpdateMoveTargetImports {
   constructor(public props: Props) {}
 
-  updateImport = (_: string, importPathInfo: ASTImportPath) => {
-    const sourceInfo = importPathInfo.node.source;
-    const importPath = sourceInfo.value as string;
+  updateImport: UpdateImport = (_: string, importPathInfo: ImportPath) => {
+    const importPath = importPathInfo.path;
 
     if (!importPath.startsWith(".")) return; // Skip non-relative imports
     const { importPather, newPathDir, moveTargetPath } = this.props;
@@ -23,14 +22,14 @@ export class UpdateMoveTargetImports {
     const absImportPath = getAbsolutePathOfImport(importPath, moveTargetPath);
     const newPathWrongSeparator = relativeFromDir(newPathDir, absImportPath);
 
-    sourceInfo.value = newPathWrongSeparator;
+    importPathInfo.path = newPathWrongSeparator;
   };
 
   updateImports = () => {
     const { updateImport } = this;
     const { importPather, moveTargetPath, newPath } = this.props;
-    const { root } = updatePathUsingUpdater(moveTargetPath, updateImport, importPather);
-    fs.writeFileSync(newPath, root.toSource());
+    const { ast } = updatePathUsingUpdater(moveTargetPath, updateImport, importPather);
+    fs.writeFileSync(newPath, ast.toSource());
   };
 }
 
