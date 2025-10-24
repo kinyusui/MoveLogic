@@ -1,9 +1,10 @@
 import fs from "fs";
 import { configImportPather, ImportPather } from "../../Nonvscode/ImportPather.js";
+import { RemoveExtensionFrom } from "../../Nonvscode/makePath.js";
 import { rootWorkspaceFs } from "../../vscodeFunctions/WorkspaceFs.js";
-import { removeExtension } from "../removeExtension.js";
 import { FilePath, ImportPath } from "./ImportPath.js";
 import { UpdateImport, updatePathUsingUpdater } from "./UpdatePathUsingUpdater.js";
+const removeExtension = RemoveExtensionFrom.fullFilePath;
 
 export const isRelative = (filePath: string) => filePath.startsWith(".");
 

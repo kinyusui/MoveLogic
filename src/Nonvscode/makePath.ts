@@ -107,3 +107,21 @@ export const configMakeAbsolute = (config: Config = {}) => {
 };
 type ConfigMakeAbsolute = typeof configMakeAbsolute;
 export type MakeAbsolute = ReturnType<ConfigMakeAbsolute>;
+
+export class RemoveExtensionFrom {
+  static fileName(fileName: string) {
+    const nameParts = fileName.split(".");
+    const noExtension = nameParts.length < 2;
+    if (noExtension) return fileName;
+    nameParts.pop();
+    return nameParts.join(".");
+  }
+
+  static fullFilePath = (itemPath: string): string => {
+    const pathParts = itemPath.split(path.sep);
+    const lastPart = pathParts[pathParts.length - 1];
+    const validLastPart = RemoveExtensionFrom.fileName(lastPart);
+    pathParts[pathParts.length - 1] = validLastPart;
+    return pathParts.join(path.sep);
+  };
+}

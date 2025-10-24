@@ -20,9 +20,9 @@ export class UpdateMoveTargetImports {
     const { importPather, newPathDir, moveTargetPath } = this.props;
     const { getAbsolutePathOfImport, relativeFromDir } = importPather;
     const absImportPath = getAbsolutePathOfImport(importPath, moveTargetPath);
-    const newPathWrongSeparator = relativeFromDir(newPathDir, absImportPath);
+    const finalPath = relativeFromDir(newPathDir, absImportPath);
 
-    importPathInfo.path = newPathWrongSeparator;
+    importPathInfo.path = finalPath;
   };
 
   updateImports = () => {
