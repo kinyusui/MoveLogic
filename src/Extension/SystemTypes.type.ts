@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
-import { MyQuickPick } from "../Nonvscode/Input.js";
 import { LoggerHandler } from "../Nonvscode/Logger.js";
+import { MyQuickPick } from "../vscodeFunctions/Input.js";
 
 export type SystemControl = {
   myQuickPick: MyQuickPick;

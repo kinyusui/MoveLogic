@@ -2,7 +2,7 @@ import fs from "fs-extra";
 import path from "path";
 import * as vscode from "vscode";
 import { QuickPickElement } from "../Extension/SystemTypes.type.js";
-import { posixify } from "./makePath.js";
+import { Posixify, posixify } from "../Nonvscode/makePath.js";
 
 const makeFullPath = (dirPath: string, fileName: string) => {
   return path.join(dirPath, fileName);
@@ -23,37 +23,62 @@ class PushWithLimit {
   limitReached = (itemSize: number) => itemSize >= this.limit;
 }
 
-const configRecursiveSearch = (pushWithLimit: PushWithLimit) => {
-  const recursiveSearch = (rootDir: string, totalPaths: string[]) => {
+export const toSuggestionFormat = (pathStr: string) => {
+  const otherSep = path.sep ? `\\` : "/";
+  const parts = pathStr.split(otherSep);
+  return path.join(...parts);
+};
+
+class RecursiveSearch {
+  constructor(
+    public props: {
+      pushLimit: number;
+      pushWithLimit: PushWithLimit;
+      posixify: Posixify;
+    }
+  ) {}
+  recursiveSearch = (rootDir: string, totalPaths: string[]) => {
     const entries = fs.readdirSync(rootDir, { withFileTypes: true });
     const directories = entries.filter((entry) => entry.isDirectory());
     const dirPaths = directories.map((entry) => makeFullPath(rootDir, entry.name));
+    const { pushWithLimit } = this.props;
     totalPaths = pushWithLimit.push(totalPaths, dirPaths);
 
     for (const dirPath of dirPaths) {
       if (pushWithLimit.limitReached(totalPaths.length)) break;
-      recursiveSearch(dirPath, totalPaths);
+      this.recursiveSearch(dirPath, totalPaths);
     }
     return totalPaths;
   };
-  return recursiveSearch;
+
+  startSearch = (rootDir: string, totalPaths: string[]) => {
+    const rootDirFormatted = toSuggestionFormat(rootDir);
+    totalPaths.push(rootDirFormatted);
+    this.props.pushWithLimit = new PushWithLimit(this.props.pushLimit);
+    return this.recursiveSearch(rootDir, totalPaths);
+  };
+}
+
+const configRecursiveSearch = ({ pushLimit }: { pushLimit: number }) => {
+  const pushWithLimit = new PushWithLimit(pushLimit);
+  return new RecursiveSearch({ pushLimit, pushWithLimit, posixify: posixify });
 };
-const pushWithLimit100 = new PushWithLimit(100);
-const recursiveSearchLimit100 = configRecursiveSearch(pushWithLimit100);
+
+const recursiveSearchLimit100 = configRecursiveSearch({ pushLimit: 100 });
 
 function getAllDirectories(rootDir: string): string[] {
   // recursively gather all directories under rootDir
   let totalPaths: string[] = [];
-  totalPaths = recursiveSearchLimit100(rootDir, totalPaths);
+  totalPaths = recursiveSearchLimit100.startSearch(rootDir, totalPaths);
   return totalPaths;
 }
 
 const trueDirName = (dirPath: string) => {
-  const willSkip = dirPath[dirPath.length - 1] === "/";
-  if (willSkip) {
+  const endsWithSlash = dirPath[dirPath.length - 1] === "/";
+  if (endsWithSlash) {
     dirPath = dirPath.slice(0, -1);
   }
-  return path.dirname(dirPath);
+  return dirPath; //path.dirname(dirPath);
 };
 
 export type Resolve = (path: string) => void;

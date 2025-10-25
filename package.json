@@ -4,6 +4,8 @@
   "displayName": "TS Move Helper",
   "publisher": "kinyusui",
   "description": "Move many TS files",
+  "main": "./out/Extension/RegisterExtension.js",
+  "version": "0.0.12",
   "icon": "./TS_Icon.png",
   "repository": "https://github.com/kinyusui/MoveLogic",
   "categories": [
@@ -21,11 +23,13 @@
     "tsmove",
     "tsMultiMove"
   ],
-  "version": "0.0.11",
+  "runtimeArgs": [
+    "--nocrankshaft",
+    "--no-turbo-inlining"
+  ],
   "engines": {
     "vscode": "^1.95.0"
   },
-  "main": "./out/Extension/RegisterExtension.js",
   "activationEvents": [
     "onStartupFinished"
   ],

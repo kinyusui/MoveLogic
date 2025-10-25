@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 // import { configMoveLogic } from "../Jscodeshift/MoveLogic";
-import { configMyQuickPick } from "../Nonvscode/Input.js";
+import { configMyQuickPick } from "../vscodeFunctions/Input.js";
 import { HandleMove } from "./HandleMove.js";
 import { configHandleUseSuggest, HandleUseSuggest } from "./HandleUseSuggest.js";
 import { rootLoggerHandler } from "./Logger.js";
