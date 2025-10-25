@@ -72,12 +72,14 @@ export class MoveLogic {
     // await removeDirer.removeEmptyDir(oldDirPath);
   };
 }
+export type ConfigMessageMaker = (total: number) => (progress: number) => string;
+export type MessageMaker = ReturnType<ConfigMessageMaker>;
 
-export const configMakeMoveMessage = (total: number) => {
+export const configMakeMoveMessage: ConfigMessageMaker = (total: number) => {
   return (progress: number) => {
     const percent = 100 * (progress / total);
     const shortPercent = percent.toFixed(3);
-    return `Moved ${progress}/${total} item(s). ${shortPercent}`;
+    return `Moved ${progress}/${total} item(s). ${shortPercent}% complete.`;
   };
 };
 
