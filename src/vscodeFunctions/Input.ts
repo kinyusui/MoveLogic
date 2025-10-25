@@ -3,6 +3,7 @@ import path from "path";
 import * as vscode from "vscode";
 import { QuickPickElement } from "../Extension/SystemTypes.type.js";
 import { Posixify, posixify } from "../Nonvscode/makePath.js";
+import { SortPaths, SortPathsManager } from "../Nonvscode/Sort.js";
 
 const makeFullPath = (dirPath: string, fileName: string) => {
   return path.join(dirPath, fileName);
@@ -29,12 +30,13 @@ export const toSuggestionFormat = (pathStr: string) => {
   return path.join(...parts);
 };
 
-class RecursiveSearch {
+class SearchPaths {
   constructor(
     public props: {
       pushLimit: number;
       pushWithLimit: PushWithLimit;
       posixify: Posixify;
+      sortPaths: SortPaths;
     }
   ) {}
   recursiveSearch = (rootDir: string, totalPaths: string[]) => {
@@ -51,27 +53,35 @@ class RecursiveSearch {
     return totalPaths;
   };
 
-  startSearch = (rootDir: string, totalPaths: string[]) => {
-    const rootDirFormatted = toSuggestionFormat(rootDir);
-    totalPaths.push(rootDirFormatted);
+  startRecursiveSearch = (dirPath: string) => {
+    const dirPathFormatted = toSuggestionFormat(dirPath);
+    let totalPaths: string[] = [dirPathFormatted];
     this.props.pushWithLimit = new PushWithLimit(this.props.pushLimit);
-    return this.recursiveSearch(rootDir, totalPaths);
+    totalPaths = this.recursiveSearch(dirPath, totalPaths);
+    return totalPaths.map((label) => ({ label }));
+  };
+
+  startShallowSearch = (dirPath: string) => {
+    const dirPathFormatted = toSuggestionFormat(dirPath);
+    const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+    const filePaths = entries.map((entry) => makeFullPath(dirPath, entry.name));
+
+    filePaths.push(dirPathFormatted);
+    return filePaths.map((label) => ({ label }));
   };
 }
 
-const configRecursiveSearch = ({ pushLimit }: { pushLimit: number }) => {
+const configSearchPaths = ({ pushLimit }: { pushLimit: number }) => {
   const pushWithLimit = new PushWithLimit(pushLimit);
-  return new RecursiveSearch({ pushLimit, pushWithLimit, posixify: posixify });
+  return new SearchPaths({
+    pushLimit,
+    pushWithLimit,
+    posixify: posixify,
+    sortPaths: SortPathsManager.sort,
+  });
 };
 
-const recursiveSearchLimit100 = configRecursiveSearch({ pushLimit: 100 });
-
-function getAllDirectories(rootDir: string): string[] {
-  // recursively gather all directories under rootDir
-  let totalPaths: string[] = [];
-  totalPaths = recursiveSearchLimit100.startSearch(rootDir, totalPaths);
-  return totalPaths;
-}
+const searchPathsLimit100 = configSearchPaths({ pushLimit: 100 });
 
 const trueDirName = (dirPath: string) => {
   const endsWithSlash = dirPath[dirPath.length - 1] === "/";
@@ -96,8 +106,16 @@ const makeOnDidAccept = (quickPick: QuickPickElement, resolve: Resolve) => {
   };
 };
 
+type Props = {
+  searchPaths: SearchPaths;
+};
+
 export class MyQuickPick {
-  constructor(public quickPick: QuickPickElement = MyQuickPick.makeSkeleton()) {}
+  quickPick: QuickPickElement;
+  constructor(public props: Props) {
+    this.quickPick = this.makeSkeleton();
+  }
+
   getInput = async (startPath: string) => {
     const { quickPick } = this;
     quickPick.value = startPath;
@@ -108,15 +126,15 @@ export class MyQuickPick {
     return await input;
   };
 
-  static makeSkeleton = () => {
+  makeSkeleton = () => {
     const quickPick = vscode.window.createQuickPick();
     quickPick.placeholder = "Enter new path for file/folder";
 
     quickPick.onDidChangeValue((pathName: string) => {
       const posixifiedPath = posixify(pathName);
       const dir = trueDirName(posixifiedPath);
-      const allOptions = getAllDirectories(dir);
-      quickPick.items = allOptions.map((label) => ({ label }));
+      const allOptions = this.props.searchPaths.startShallowSearch(dir);
+      quickPick.items = allOptions;
       if (quickPick.items.length === 0) {
         quickPick.selectedItems = [];
         quickPick.activeItems = [];
@@ -132,5 +150,7 @@ export class MyQuickPick {
 }
 
 export const configMyQuickPick = () => {
-  return new MyQuickPick();
+  return new MyQuickPick({
+    searchPaths: searchPathsLimit100,
+  });
 };
