@@ -116,12 +116,25 @@ export class MyQuickPick {
     this.quickPick = this.makeSkeleton();
   }
 
+  updateItems = (pathName: string) => {
+    const posixifiedPath = posixify(pathName);
+    const dir = trueDirName(posixifiedPath);
+    const allOptions = this.props.searchPaths.startShallowSearch(dir);
+    const { quickPick } = this;
+    quickPick.items = allOptions;
+    if (quickPick.items.length === 0) {
+      quickPick.selectedItems = [];
+      quickPick.activeItems = [];
+    }
+  };
+
   getInput = async (startPath: string) => {
     const { quickPick } = this;
     quickPick.value = startPath;
     const input = new Promise((resolve: Resolve) => {
       const onDidAccept = makeOnDidAccept(quickPick, resolve);
       quickPick.onDidAccept(onDidAccept);
+      this.updateItems(startPath);
     });
     return await input;
   };
@@ -130,16 +143,7 @@ export class MyQuickPick {
     const quickPick = vscode.window.createQuickPick();
     quickPick.placeholder = "Enter new path for file/folder";
 
-    quickPick.onDidChangeValue((pathName: string) => {
-      const posixifiedPath = posixify(pathName);
-      const dir = trueDirName(posixifiedPath);
-      const allOptions = this.props.searchPaths.startShallowSearch(dir);
-      quickPick.items = allOptions;
-      if (quickPick.items.length === 0) {
-        quickPick.selectedItems = [];
-        quickPick.activeItems = [];
-      }
-    });
+    quickPick.onDidChangeValue(this.updateItems);
 
     quickPick.ignoreFocusOut = true;
     return quickPick;
