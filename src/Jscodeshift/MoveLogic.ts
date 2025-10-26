@@ -72,14 +72,53 @@ export class MoveLogic {
     // await removeDirer.removeEmptyDir(oldDirPath);
   };
 }
+
+const formatMillisecondsWithDate = (ms: number): string => {
+  const invalidMs = !ms || ms < 0;
+  if (invalidMs) return "00:00:00";
+
+  // Create a date object. The milliseconds are treated as an offset from the UTC epoch.
+  const date = new Date(ms);
+
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const seconds = date.getSeconds();
+
+  const paddedHours = String(hours).padStart(2, "0");
+  const paddedMinutes = String(minutes).padStart(2, "0");
+  const paddedSeconds = String(seconds).padStart(2, "0");
+
+  return `${paddedHours}:${paddedMinutes}:${paddedSeconds}`;
+};
+
 export type ConfigMessageMaker = (total: number) => (progress: number) => string;
 export type MessageMaker = ReturnType<ConfigMessageMaker>;
 
+const milisecondsToSeconds = (num: number) => (num / 1000).toFixed(3);
 export const configMakeMoveMessage: ConfigMessageMaker = (total: number) => {
+  const start = performance.now();
+  const startDateMs = new Date().getTime();
   return (progress: number) => {
-    const percent = 100 * (progress / total);
+    const percentDecimal = progress / total;
+    const percent = 100 * percentDecimal;
+
+    const timeElapsed = performance.now() - start;
+    const totalTimeNeeded = timeElapsed * (1 / percentDecimal);
+    const timeLeft = totalTimeNeeded - timeElapsed;
+    const doneAtTime = startDateMs + totalTimeNeeded;
+
+    const timeElapsedInSeconds = milisecondsToSeconds(timeElapsed);
     const shortPercent = percent.toFixed(3);
-    return `Moved ${progress}/${total} item(s). ${shortPercent}% complete.`;
+    const totalTimeNeededInSeconds = milisecondsToSeconds(totalTimeNeeded);
+    const timeLeftInSeconds = milisecondsToSeconds(timeLeft);
+    const doneAtTimeString = formatMillisecondsWithDate(doneAtTime);
+    return (
+      `Moved ${progress}/${total} item(s). ${shortPercent}% complete.` +
+      `\n--Done At: ${doneAtTimeString}` +
+      `\n--Time Elapsed: ${timeElapsedInSeconds} seconds.` +
+      `\n--Total Time Needed: ${totalTimeNeededInSeconds}s.` +
+      `\n--Time Left: ${timeLeftInSeconds}s`
+    );
   };
 };
 
