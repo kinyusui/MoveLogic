@@ -1,0 +1,8 @@
+**/**
+
+!.vscodeignore
+!out
+!package.json
+!LICENSE.md
+!Readme.md
+!TS_Icon.png
