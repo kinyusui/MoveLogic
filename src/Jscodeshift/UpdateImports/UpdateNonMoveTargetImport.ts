@@ -1,10 +1,11 @@
 import fs from "fs";
 import { configImportPather, ImportPather } from "../../Nonvscode/ImportPather.js";
-import { RemoveExtensionFrom } from "../../Nonvscode/makePath.js";
+import { removeTsTypesFrom } from "../../Nonvscode/makePath.js";
 import { rootWorkspaceFs } from "../../vscodeFunctions/WorkspaceFs.js";
 import { FilePath, ImportPath } from "./ImportPath.js";
 import { UpdateImport, updatePathUsingUpdater } from "./UpdatePathUsingUpdater.js";
-const removeExtension = RemoveExtensionFrom.fullFilePath;
+
+const removeExtension = removeTsTypesFrom.fullFilePath;
 
 export const isRelative = (filePath: string) => filePath.startsWith(".");
 
@@ -13,7 +14,7 @@ export class UpdateNonMoveTargetImport {
   constructor(
     public moveTargetPath: FilePath,
     public newPath: FilePath,
-    public importPather: ImportPather
+    public importPather: ImportPather,
   ) {
     this.updateOccurred = false;
   }
@@ -21,13 +22,14 @@ export class UpdateNonMoveTargetImport {
   static isMoveTargetAnImport = (
     moveTargetPath: string,
     importPathInFile: string,
-    dirOfFileWithImport: string
+    dirOfFileWithImport: string,
   ) => {
     const absMoveTargetPath = rootWorkspaceFs.resolve(moveTargetPath);
     const absImportPath = rootWorkspaceFs.resolve(
       dirOfFileWithImport,
-      importPathInFile
+      importPathInFile,
     );
+
     const moveTargetNoExt = removeExtension(absMoveTargetPath);
     const importPathNoExt = removeExtension(absImportPath);
     const match = moveTargetNoExt === importPathNoExt;
@@ -42,7 +44,7 @@ export class UpdateNonMoveTargetImport {
     const affectedByMove = UpdateNonMoveTargetImport.isMoveTargetAnImport(
       moveTargetPath,
       importPath,
-      startDirPath
+      startDirPath,
     );
     if (affectedByMove) {
       const { relativeFromDir } = this.importPather;
@@ -58,12 +60,14 @@ export class UpdateNonMoveTargetImport {
     const { updateImport, importPather } = this;
     const { ast } = updatePathUsingUpdater(filePath, updateImport, importPather);
     if (this.updateOccurred) fs.writeFileSync(filePath, ast.toSource());
+
+    this.updateOccurred = false; // reset for next run.
   };
 }
 
 export const configUpdateNonMoveTargetImport = (
   moveTargetPath: FilePath,
-  newPath: FilePath
+  newPath: FilePath,
 ) => {
   [moveTargetPath, newPath] = [moveTargetPath, newPath].map(removeExtension);
   const importPather = configImportPather();

@@ -8,7 +8,6 @@ import { baseMakeNewPath, Posixify, posixify } from "../Nonvscode/makePath.js";
 import { makeProject } from "./Project.js";
 
 export const moveFile = (file: SourceFile, oldDirPath: string, newDirPath: string) => {
-  console.log(file.getFilePath());
   const newPath = baseMakeNewPath(file.getFilePath(), oldDirPath, newDirPath);
   file.move(newPath, { overwrite: true }); // move and update imports automatically
 };
@@ -35,7 +34,7 @@ class MoveLogic {
   makeMoveFile = (
     sourceFiles: SourceFile[],
     oldDirPath: string,
-    newDirPath: string
+    newDirPath: string,
   ) => {
     const { moveFile, showProgress } = this.props;
     const total = sourceFiles.length;
@@ -70,7 +69,7 @@ const makeBar = () => {
     {
       format: progressBarText,
     },
-    Presets.shades_classic
+    Presets.shades_classic,
   );
 };
 type MakeBar = typeof makeBar;
