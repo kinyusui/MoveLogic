@@ -55,7 +55,7 @@ export type UpdateImport = (startDirPath: string, importPathInfo: ImportPath) =>
 export const updatePathUsingUpdater = (
   startPath: string,
   updater: UpdateImport,
-  importPather: ImportPather
+  importPather: ImportPather,
 ) => {
   const { importPaths, ast } = getFileInfo(startPath);
   const absFilePath = importPather.workspaceFs.resolve(startPath);

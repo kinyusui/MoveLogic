@@ -61,14 +61,14 @@
     }
   },
   "scripts": {
+    "publish": "vsce publish",
     "vscode:prepublish": "npm run compile",
     "compile": "rimraf ./out && tsc -p ./",
     "compile_watch": "tsc -watch -p ./",
     "testCompile": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "vitest",
-    "type_check": "npx tsc --noEmit --watch",
-    "publish": "vsce publish"
+    "type_check": "npx tsc --noEmit --watch"
   },
   "dependencies": {
     "callsites": "^4.2.0",

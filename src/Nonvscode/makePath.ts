@@ -16,7 +16,7 @@ export const getLastDir = (filePath: string) => {
 export const baseMakeNewPath = (
   filePath: string,
   oldDirPath: string,
-  newDirPath: string
+  newDirPath: string,
 ) => {
   const relativePath = path.relative(oldDirPath, filePath);
   return path.join(newDirPath, relativePath);
@@ -109,19 +109,26 @@ type ConfigMakeAbsolute = typeof configMakeAbsolute;
 export type MakeAbsolute = ReturnType<ConfigMakeAbsolute>;
 
 export class RemoveExtensionFrom {
-  static fileName(fileName: string) {
+  constructor(private extensionsToRemove: Set<string>) {}
+  fileName = (fileName: string) => {
     const nameParts = fileName.split(".");
     const noExtension = nameParts.length < 2;
     if (noExtension) return fileName;
-    nameParts.pop();
-    return nameParts.join(".");
-  }
 
-  static fullFilePath = (itemPath: string): string => {
+    const lastExtension = nameParts[nameParts.length - 1];
+    const shouldCutLastExtension = this.extensionsToRemove.has(lastExtension);
+    if (shouldCutLastExtension) nameParts.pop();
+
+    return nameParts.join(".");
+  };
+
+  fullFilePath = (itemPath: string): string => {
     const pathParts = itemPath.split(path.sep);
     const lastPart = pathParts[pathParts.length - 1];
-    const validLastPart = RemoveExtensionFrom.fileName(lastPart);
+    const validLastPart = this.fileName(lastPart);
     pathParts[pathParts.length - 1] = validLastPart;
     return pathParts.join(path.sep);
   };
 }
+
+export const removeTsTypesFrom = new RemoveExtensionFrom(tsTypes);
