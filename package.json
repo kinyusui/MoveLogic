@@ -4,7 +4,7 @@
   "publisher": "kinyusui",
   "description": "Move many TS files",
   "main": "./dist/Extension/RegisterExtension.js",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "icon": "./TS_Icon.png",
   "repository": "https://github.com/kinyusui/MoveLogic",
   "categories": [
@@ -62,7 +62,7 @@
   "scripts": {
     "publish": "vsce publish --no-dependencies",
     "vscode:prepublish": "npm run clean_compile",
-    "compile": "esbuild ./src/Extension/RegisterExtension.ts --bundle --outfile=dist/Extension/RegisterExtension.js --external:vscode --format=cjs --platform=node",
+    "compile": "esbuild ./src/Extension/RegisterExtension.ts --bundle --minify --tree-shaking=true --outfile=dist/Extension/RegisterExtension.js --external:vscode --format=cjs --platform=node",
     "clean_compile": "rimraf ./dist && npm run compile",
     "compile_watch": "npm run compile -- --watch",
     "testCompile": "npm run compile && npm run lint",
