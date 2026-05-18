@@ -14,8 +14,8 @@ Really basic it just moves multiple ts files.
 2. Launch project and the default tasks should automatically run.
 3. Entry is specified in package.json.
 4. Helpers are.
-   "compile_watch": "tsc -watch -p ./".
-   "testCompile": "npm run compile && npm run lint".
+   1. `compile_watch`.
+   2. `testCompile`.
 
 # Publish Extension
 

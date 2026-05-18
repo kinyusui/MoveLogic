@@ -1,7 +1,7 @@
 **/**
 
 !.vscodeignore
-!out
+!dist
 !package.json
 !LICENSE.md
 !Readme.md
